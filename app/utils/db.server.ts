@@ -18,8 +18,6 @@ export const db = singleton('db', () => {
 			name: nullable(String),
 
 			createdAt: () => new Date(),
-
-			pets: manyOf('pet'),
 		},
 		pet: {
 			id: primaryKey(getId),
@@ -45,41 +43,32 @@ export const db = singleton('db', () => {
 		name: 'Gema',
 	})
 
-	const liamsPets = [
+
+	const pets = [
 		{
 			id: 'd27a197e',
-			title: 'Choji',
+			name: 'Choji',
+			owners: [userLiam]
 		},
-	]
-
-	const gemasPets = [
 		{
 			id: 'v27b3453',
-			title: 'Stitch',
+			name: 'Stitch',
+			owners: [userGema]
 		},
 		{
 			id: 'j943hs96',
-			title: 'Bombhead',
+			name: 'Bombhead',
+			owners: [userGema]
 		},
 		{
 			id: 'mk6094sh',
-			title: 'Blue',
+			name: 'Blue',
+			owners: [userGema]
 		},
 	]
 
-	for (const pet of liamsPets) {
-		db.pet.create({
-			...pet,
-			owners: [userLiam],
-		})
-	}
-
-
-	for (const gemasPet of gemasPets) {
-		db.pet.create({
-			...gemasPet,
-			owners: [userGema],
-		})
+	for (const pet of pets) {
+		db.pet.create(pet)
 	}
 
 	return db

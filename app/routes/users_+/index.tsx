@@ -7,7 +7,7 @@ import { json } from "@remix-run/node";
 export async function loader() {
 	const users = db.user
         .getAll()
-		.map(({ id, name }) => ({ id, name }))
+		.map(({ id, name, username }) => ({ id, name, username}))
 	return json({ users })
 }
 
@@ -20,7 +20,7 @@ export default function UsersListPage() {
             <ul>
                 {users.map((user) => (
                     <li key={user.id}>
-                        <Link to={`./${user.id}`}>{user.name}</Link>
+                        <Link to={`./${user.username}`}>{user.name}</Link>
                     </li>
                 ))}
             </ul>
