@@ -5,13 +5,13 @@ export const meta: MetaFunction = () => {
     { title: "Pet Booker" },
     { name: "A place to book your pets in for the day", content: "Book your pets in!" },
   ];
-};
+}
 
 export default function Index() {
   return (
     <div>
-      <h1>Index</h1>
+      <h1>Home page</h1>
       <p>Book a pet in and manage your clients&#39; fur-babies</p>
-    </div>
-  );
+    </div> 
+  )
 }
