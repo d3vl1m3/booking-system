@@ -1,6 +1,6 @@
 import { Link, useParams } from "@remix-run/react"
 
-export default function ProfileDetailsPage() {
+export default function UserDetailsPage() {
     const {userId} = useParams()
     return <div>
 

@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 
-export default function ProfileListPage() {
+export default function UsersListPage() {
     return (
         <div>
             <h1>List page</h1>
