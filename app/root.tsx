@@ -33,13 +33,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <nav>
             <ul>
               <li>
-                <Link to={"profiles/me"}>
+                <Link to={"users/me"}>
                   My profile
                 </Link>
               </li>
               <li>
-                <Link to={"pets/"}>
-                  All Pets
+                <Link to={"users"}>
+                  Users
+                </Link>
+              </li>
+              <li>
+                <Link to={"pets"}>
+                  Pets
+                </Link>
+              </li>
+              <li>
+                <Link to={"bookings"}>
+                  Bookings
                 </Link>
               </li>
             </ul>
