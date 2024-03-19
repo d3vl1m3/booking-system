@@ -14,27 +14,28 @@ export const db = singleton('db', () => {
 	const db = factory({
 		user: {
 			id: primaryKey(getId),
-			email: String,
-			username: String,
-			name: nullable(String),
-
 			createdAt: () => new Date(),
+
+			email: String,
+			name: nullable(String),
+			username: String,
 		},
 		pet: {
 			id: primaryKey(getId),
-			name: String,
-
 			createdAt: () => new Date(),
-
+		
+			name: String,
 			owners: manyOf('user'),
 		},
 		booking: {
 			id: primaryKey(getId),
 			createdAt: () => new Date(),
-			pets: manyOf('pet'),
+
+			bookedBy: oneOf('user'),
 			dateStart: Date,
 			dateEnd: Date,
-			bookedBy: oneOf('user'),
+			bookingRefrence: String,
+			pets: manyOf('pet'),
 		},
 	})
 
@@ -100,6 +101,7 @@ export const db = singleton('db', () => {
 
 	db.booking.create({
 		id: '84jhsop947b2b2950kdsbnn383j2j2j2',
+		bookingRefrence: 'DG-4730as',
 		dateStart: addDays(3).toDateString(),
 		dateEnd: addDays(4).toDateString(),
 		bookedBy: userLiam,
