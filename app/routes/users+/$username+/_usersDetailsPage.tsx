@@ -1,9 +1,9 @@
 import { Link, useLoaderData } from "@remix-run/react"
 
-import { db } from 'app/utils/db.server'
+import { db } from '~/utils/db.server'
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { invariantResponse } from "../misc";
 import { GeneralErrorBoundary } from "~/components/generalErrorBoundary";
+import { invariantResponse } from "~/utils/misc";
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const user = db.user.findFirst({

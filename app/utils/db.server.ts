@@ -6,7 +6,7 @@
 import crypto from 'crypto'
 import { factory, manyOf, nullable, oneOf, primaryKey } from '@mswjs/data'
 import { singleton } from './singleton.server'
-import { invariantResponse } from '~/routes/users_+/misc'
+import { invariantResponse } from '~/utils/misc'
 
 const getId = () => crypto.randomBytes(16).toString('hex').slice(0, 8)
 

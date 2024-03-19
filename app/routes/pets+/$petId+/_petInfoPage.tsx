@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { Link, useLoaderData } from "@remix-run/react"
-import { invariantResponse } from "~/routes/users_+/misc"
+import { invariantResponse } from "~/utils/misc"
 import { db } from "~/utils/db.server"
 
 
@@ -24,12 +24,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	})
 }
 
-export default function PetDetailsPage() {
+export default function PetInfoPage() {
     const {pet} = useLoaderData<typeof loader>()
 
     return (
 		<>
-			<h1>{pet.name}&#39;s details</h1>
+			<h1>{pet.name}&#39;s nfo</h1>
 			<p><Link to="./..">Back to Pets List</Link></p>
 			<p>Pet ID: {pet.id}</p>
 			<p>Owners:</p>

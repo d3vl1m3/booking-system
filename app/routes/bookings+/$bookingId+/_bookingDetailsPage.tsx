@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { Link, useLoaderData } from "@remix-run/react"
-import { invariantResponse } from "~/routes/users_+/misc"
 import { db } from "~/utils/db.server"
+import { invariantResponse } from "~/utils/misc"
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const booking = db.booking.findFirst({
