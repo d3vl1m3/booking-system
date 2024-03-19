@@ -1,23 +1,35 @@
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
+
+import { db } from 'app/utils/db.server'
+import { json } from "@remix-run/node";
+
+
+export async function loader() {
+	const pets = db.pet
+        .getAll()
+		.map(({ id, name }) => ({ id, name}))
+	return json({ pets })
+}
 
 export default function PetsListPage() {
+	const { pets } = useLoaderData<typeof loader>()
+
+
     return (
         <div>
             <h1>Pets List Page</h1>
-            <ul>
-                <li>
-                    <Link to="./pet-1">Pet 1</Link>
-                </li>
-                <li>
-                    <Link to="./pet-2">Pet 2</Link>
-                </li>
-                <li>
-                    <Link to="./pet-3">Pet 3</Link>
-                </li>
-                <li>
-                    <Link to="./pet-4">Pet 4</Link>
-                </li>
-            </ul>
+            { pets.length ? (
+                <ul>
+                    {
+                    pets.map((pet) => (
+                        <li key={pet.id}>
+                            <Link to={`./${pet.id}`}> 
+                                {pet.name}
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            ) : 'No pets'}
         </div>
     )
 } 
