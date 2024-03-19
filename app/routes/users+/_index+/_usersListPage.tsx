@@ -3,16 +3,23 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { db } from "app/utils/db.server"
 import { json } from "@remix-run/node";
 
+type User = {
+    id: string;
+    name: string | null;
+    username: string;
+}
+
 
 export async function loader() {
-	const users = db.user
+	const users: User[] = db.user
         .getAll()
 		.map(({ id, name, username }) => ({ id, name, username}))
 	return json({ users })
 }
 
 export default function UsersListPage() {
-	const { users } = useLoaderData<typeof loader>()
+	const { users }: {users: User[]} = useLoaderData<typeof loader>()
+    
 
     return (
         <>
