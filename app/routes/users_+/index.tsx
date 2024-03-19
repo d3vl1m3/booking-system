@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from "@remix-run/react";
 
-import { db } from 'app/utils/db.server'
+import { db } from "app/utils/db.server"
 import { json } from "@remix-run/node";
 
 
