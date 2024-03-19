@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 import { db } from 'app/utils/db.server'
 import { json } from "@remix-run/node";
@@ -18,6 +18,9 @@ export default function PetsListPage() {
     return (
         <>
             <h1>Pets List Page</h1>
+            <Link to='./modals/edit'>Edit Modal</Link>
+            <Link to='./modals/create'>Create Modal</Link>
+            <Outlet/>
             { pets.length ? (
                 <ul>
                     {
