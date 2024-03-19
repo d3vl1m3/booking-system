@@ -29,7 +29,7 @@ export default function PetInfoPage() {
 
     return (
 		<>
-			<h1>{pet.name}&#39;s nfo</h1>
+			<h1>{pet.name}&#39;s info</h1>
 			<p><Link to="./..">Back to Pets List</Link></p>
 			<p>Pet ID: {pet.id}</p>
 			<p>Owners:</p>
