@@ -6,12 +6,14 @@ export function loader() {
     const bookings = db.booking.getAll().map(({
         id,
         bookedBy,
+        bookingRefrence,
         dateEnd, 
         dateStart, 
         pets
     }) => ({
         id,
         bookedBy,
+        bookingRefrence,
         dateEnd, 
         dateStart, 
         pets
@@ -30,16 +32,39 @@ export default function BookingsListPage() {
         <>
             <h1>Bookings</h1>
             {bookings.length ? (
-                <ul>
-                    {bookings.map((booking) => (
-                        <li key={booking.id}>
-                            <Link to={`./${booking.id}`}>
-                                {`${booking.bookedBy?.name} (${booking.dateStart} to ${booking.dateEnd})`}
-                            </Link>
-                        </li>
+                <table>
+                    <tr>
+                        <th>Booking ref</th>
+                        <th>Booked by</th>
+                        <th>Pets booked</th>
+                        <th>Date start</th>
+                        <th>Date end</th>
+                    </tr>
+                {bookings.map((booking) => (
+                        <tr key={booking.id}>
+                            <td>
+                                <Link to={`./${booking.id}`}>
+                                    {booking.bookingRefrence}
+                                </Link>
+                            </td>
+                            <td>
+                                <Link to={`/users/${booking.bookedBy?.username}`}>
+                                    {booking.bookedBy?.name}
+                                </Link>
+                            </td>
+                            <td>
+                                {booking.pets.map(({name}) => name).join(', ')}
+                            </td>
+                            <td>
+                                {booking.dateStart}
+                            </td>
+                            <td>
+                                {booking.dateEnd}
+                            </td>
+                        </tr>
 
                     ))}
-                </ul>
+                </table>
             ) : ('No Bookings')}
         </>
     )
