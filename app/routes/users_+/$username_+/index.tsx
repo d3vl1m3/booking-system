@@ -39,27 +39,29 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export default function UserDetailsPage() {
     const {user} = useLoaderData<typeof loader>()
 
-    return <div>
-        <h1>{user.name}&#39;s profile</h1>
-        <p><Link to="./..">Back to Users List</Link></p>
-        <p>User ID: {user.id}</p>
-        <p>User name: {user.username}</p>
+    return (
+		<>
+			<h1>{user.name}&#39;s profile</h1>
+			<p><Link to="./..">Back to Users List</Link></p>
+			<p>User ID: {user.id}</p>
+			<p>User name: {user.username}</p>
 
-		<div>Pets: {user.pets 
-			? (
-				<ul>
-					{user.pets.map((pet) => (
-						<li key={pet.id}>
-							<Link to={`/pets/${pet.id}`}>
-								{pet.name}
-							</Link>
-						</li>
-					))}
-				</ul>
-			) : ('No pets')
-		}
-		</div>
-    </div>
+			<div>Pets: {user.pets 
+				? (
+					<ul>
+						{user.pets.map((pet) => (
+							<li key={pet.id}>
+								<Link to={`/pets/${pet.id}`}>
+									{pet.name}
+								</Link>
+							</li>
+						))}
+					</ul>
+				) : ('No pets')
+			}
+			</div>
+		</>
+	)
 } 
 
 export function ErrorBoundary() {

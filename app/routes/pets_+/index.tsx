@@ -16,7 +16,7 @@ export default function PetsListPage() {
 
 
     return (
-        <div>
+        <>
             <h1>Pets List Page</h1>
             { pets.length ? (
                 <ul>
@@ -30,6 +30,6 @@ export default function PetsListPage() {
                     ))}
                 </ul>
             ) : 'No pets'}
-        </div>
+        </>
     )
 } 

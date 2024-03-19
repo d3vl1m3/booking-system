@@ -27,15 +27,17 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export default function PetDetailsPage() {
     const {pet} = useLoaderData<typeof loader>()
 
-    return <div>
-        <h1>{pet.name}&#39;s details</h1>
-        <p><Link to="./..">Back to Pets List</Link></p>
-        <p>Pet ID: {pet.id}</p>
-        <p>Owners:</p>
-        <ul>
-            {pet.owners.map((owner) => (
-                <Link key={owner.id} to={`/users/${owner.username}`}>{owner.name}</Link>
-            ))}
-        </ul>
-    </div>
+    return (
+		<>
+			<h1>{pet.name}&#39;s details</h1>
+			<p><Link to="./..">Back to Pets List</Link></p>
+			<p>Pet ID: {pet.id}</p>
+			<p>Owners:</p>
+			<ul>
+				{pet.owners.map((owner) => (
+					<Link key={owner.id} to={`/users/${owner.username}`}>{owner.name}</Link>
+				))}
+			</ul>
+		</>
+	)
 } 
