@@ -1,3 +1,4 @@
+import ReactModal from 'react-modal'
 import { LinksFunction } from "@remix-run/node";
 import {
   Link,
@@ -9,6 +10,10 @@ import {
 } from "@remix-run/react";
 
 import TailwindCssUrl from '~/styles/tailwind.css?url'
+
+
+ReactModal.setAppElement('#app')
+
 
 export const links: LinksFunction = () => [
   {
@@ -25,7 +30,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body id="app">
         <header>
           <Link className="heading-1" to="/">
             Pet booker
