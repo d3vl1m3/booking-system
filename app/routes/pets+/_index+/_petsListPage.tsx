@@ -20,13 +20,9 @@ export default function PetsListPage() {
             <h1>Pets List Page</h1>
             <ul>
                 <li>
-                    <Link to='./update'>Edit Modal</Link>
-                </li>
-                <li>
-                    <Link to='./add'>Create Modal</Link>
+                    <Link to='./add'>Add Pet</Link>
                 </li>
             </ul>
-            <Outlet/>
             { pets.length ? (
                 <ul>
                     {
@@ -39,6 +35,8 @@ export default function PetsListPage() {
                     ))}
                 </ul>
             ) : 'No pets'}
+            
+            <Outlet/>
         </>
     )
 } 

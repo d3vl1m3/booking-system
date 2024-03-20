@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
-import { Link, useLoaderData } from "@remix-run/react"
+import { Link, Outlet, useLoaderData } from "@remix-run/react"
 import { invariantResponse } from "~/utils/misc"
 import { db } from "~/utils/db.server"
 
@@ -30,7 +30,14 @@ export default function PetInfoPage() {
     return (
 		<>
 			<h1>{pet.name}&#39;s info</h1>
-			<p><Link to="./..">Back to Pets List</Link></p>
+            <ul>
+				<li>
+					<Link to="./..">Back to Pets List</Link>
+				</li>
+                <li>
+					<Link to='./update'>Update Pet</Link>
+				</li>
+            </ul>
 			<p>Pet ID: {pet.id}</p>
 			<p>Owners:</p>
 			<ul>
@@ -38,6 +45,8 @@ export default function PetInfoPage() {
 					<Link key={owner.id} to={`/users/${owner.username}`}>{owner.name}</Link>
 				))}
 			</ul>
+
+			<Outlet/>
 		</>
 	)
 } 
