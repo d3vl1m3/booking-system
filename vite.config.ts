@@ -12,6 +12,7 @@ export default defineConfig({
     routes: async (defineRoutes) => {
       return flatRoutes('routes', defineRoutes, {
         appDir: 'app',
+        ignoredRouteFiles: ['**/components/**/*']
       });
     },
   }), tsconfigPaths()],

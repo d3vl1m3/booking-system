@@ -1,10 +1,10 @@
 import { RouteBasedModal } from '~/components/RouteBasedModal/routeBasedModal';
 
 
-export default function AddPetModal() {
+export const UpdatePetModal = () => {
     return (
         <RouteBasedModal>
-            <h1>Add Pet</h1>
+            <h1>Update Pet</h1>
         </RouteBasedModal>
     )
 }
