@@ -5,3 +5,7 @@
 h1, .heading-1 {
     @apply mb-2 mt-0 text-4xl font-medium leading-tight
 }
+
+.btn {
+    @apply font-bold py-2 px-4 rounded border border-gray-800;
+  }

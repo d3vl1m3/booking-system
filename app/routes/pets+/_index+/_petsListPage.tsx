@@ -20,7 +20,7 @@ export default function PetsListPage() {
             <h1>Pets List Page</h1>
             <ul>
                 <li>
-                    <Link to='./edit'>Edit Modal</Link>
+                    <Link to='./update'>Edit Modal</Link>
                 </li>
                 <li>
                     <Link to='./add'>Create Modal</Link>
