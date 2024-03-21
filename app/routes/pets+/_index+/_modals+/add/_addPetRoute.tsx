@@ -1,6 +1,5 @@
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node'
-import { Form, useLoaderData } from '@remix-run/react'
-import { RouteBasedModal } from '~/components/RouteBasedModal/routeBasedModal'
+import { useLoaderData } from '@remix-run/react'
 import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPetModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -66,28 +65,5 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function AddPetRoute() {
 	const { owners }: { owners: Owner[] } = useLoaderData<typeof loader>()
 
-	return (
-		<RouteBasedModal>
-			<h1>Add Pet</h1>
-			<Form method="POST">
-				<div>
-					<label htmlFor="name">Name: </label>
-					<input type="text" name="name" id="name" />
-				</div>
-				<div>
-					<label htmlFor="owner">Owner: </label>
-					<select name="owner" id="owner" required>
-						{owners.map(owner => (
-							<option key={owner.id} value={owner.id}>
-								{owner.name}
-							</option>
-						))}
-					</select>
-				</div>
-				<button type="submit" className="btn">
-					Save
-				</button>
-			</Form>
-		</RouteBasedModal>
-	)
+	return <AddPetModal owners={owners} />
 }
