@@ -6,7 +6,7 @@ export const AddPetModal = ({ owners }: { owners: Owner[] }) => {
 	return (
 		<RouteBasedModal>
 			<h1>Add Pet</h1>
-			<Form method="POST" action="./?index">
+			<Form method="POST">
 				<div>
 					<label htmlFor="name">Name: </label>
 					<input type="text" name="name" id="name" />
