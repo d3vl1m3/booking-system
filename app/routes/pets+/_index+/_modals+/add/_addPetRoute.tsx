@@ -17,7 +17,7 @@ export function loader() {
 	return json({ owners })
 }
 
-export async function actions({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	const formNameValue = formData.get('name')
 	const name = typeof formNameValue === 'string' ? formNameValue : undefined
