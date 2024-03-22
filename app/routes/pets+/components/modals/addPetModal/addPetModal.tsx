@@ -1,6 +1,10 @@
 import { Form } from '@remix-run/react'
 import { RouteBasedModal } from '~/components/RouteBasedModal/routeBasedModal'
-import { type Owner } from '~/routes/pets+/_index+/_modals+/add/_addPetRoute'
+
+type Owner = {
+	id: string
+	name: string
+}
 
 export const AddPetModal = ({ owners }: { owners: Owner[] }) => {
 	return (

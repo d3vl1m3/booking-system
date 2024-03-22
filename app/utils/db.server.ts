@@ -17,13 +17,13 @@ export const db = singleton('db', () => {
 			createdAt: () => new Date(),
 
 			email: String,
-			name: nullable(String),
+			name: String,
 			username: String,
 		},
 		pet: {
 			id: primaryKey(getId),
 			createdAt: () => new Date(),
-		
+
 			name: String,
 			owners: manyOf('user'),
 		},
@@ -53,27 +53,26 @@ export const db = singleton('db', () => {
 		name: 'Gema',
 	})
 
-
 	const pets = [
 		{
 			id: 'd27a197e',
 			name: 'Choji',
-			owners: [userLiam]
+			owners: [userLiam],
 		},
 		{
 			id: 'v27b3453',
 			name: 'Stitch',
-			owners: [userGema]
+			owners: [userGema],
 		},
 		{
 			id: 'j943hs96',
 			name: 'Bombhead',
-			owners: [userGema]
+			owners: [userGema],
 		},
 		{
 			id: 'mk6094sh',
 			name: 'Blue',
-			owners: [userGema]
+			owners: [userGema],
 		},
 	]
 
@@ -81,20 +80,19 @@ export const db = singleton('db', () => {
 		db.pet.create(pet)
 	}
 
-
 	function addDays(daysToAdd: number) {
-		const today = new Date();
-		const futureDate = new Date(today);
-		futureDate.setDate(today.getDate() + daysToAdd);
-		return futureDate;
+		const today = new Date()
+		const futureDate = new Date(today)
+		futureDate.setDate(today.getDate() + daysToAdd)
+		return futureDate
 	}
 
 	const choji = db.pet.findFirst({
 		where: {
 			name: {
-				equals: 'Choji'
-			}
-		}
+				equals: 'Choji',
+			},
+		},
 	})
 
 	invariantResponse(choji, 'Choji was not found when hydrating the DB!')
@@ -105,7 +103,7 @@ export const db = singleton('db', () => {
 		dateStart: addDays(3).toDateString(),
 		dateEnd: addDays(4).toDateString(),
 		bookedBy: userLiam,
-		pets: [choji]
+		pets: [choji],
 	})
 
 	return db
