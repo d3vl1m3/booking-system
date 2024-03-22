@@ -31,7 +31,6 @@ export const db = singleton('db', () => {
 			id: primaryKey(getId),
 			createdAt: () => new Date(),
 
-			bookedBy: oneOf('user'),
 			dateStart: Date,
 			dateEnd: Date,
 			bookingRefrence: getId,
@@ -104,13 +103,11 @@ export const db = singleton('db', () => {
 		{
 			dateStart: addDays(3).toDateString(),
 			dateEnd: addDays(4).toDateString(),
-			bookedBy: userLiam,
 			pets: [choji],
 		},
 		{
 			dateStart: addDays(10).toDateString(),
 			dateEnd: addDays(12).toDateString(),
-			bookedBy: userGema,
 			pets: [bombhead],
 		},
 	]

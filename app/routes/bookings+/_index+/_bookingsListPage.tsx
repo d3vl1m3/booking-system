@@ -1,4 +1,4 @@
-import { Link, json, useLoaderData } from '@remix-run/react'
+import { Link, Outlet, json, useLoaderData } from '@remix-run/react'
 import { db } from '~/utils/db.server'
 
 export function loader() {
@@ -24,11 +24,15 @@ export default function BookingsListPage() {
 	return (
 		<>
 			<h1>Bookings</h1>
+			<ul>
+				<li>
+					<Link to="./add">Add booking</Link>
+				</li>
+			</ul>
 			{bookings.length ? (
 				<table>
 					<tr>
 						<th>Booking ref</th>
-						<th>Booked by</th>
 						<th>Pets booked</th>
 						<th>Date start</th>
 						<th>Date end</th>
@@ -37,11 +41,6 @@ export default function BookingsListPage() {
 						<tr key={booking.id}>
 							<td>
 								<Link to={`./${booking.id}`}>{booking.bookingRefrence}</Link>
-							</td>
-							<td>
-								<Link to={`/users/${booking.bookedBy?.id}`}>
-									{booking.bookedBy?.name}
-								</Link>
 							</td>
 							<td>{booking.pets.map(({ name }) => name).join(', ')}</td>
 							<td>{booking.dateStart}</td>
@@ -52,6 +51,7 @@ export default function BookingsListPage() {
 			) : (
 				'No Bookings'
 			)}
+			<Outlet />
 		</>
 	)
 }
