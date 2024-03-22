@@ -4,11 +4,6 @@ import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPet
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-export type Owner = {
-	id: string
-	name: string | null
-}
-
 export function loader() {
 	const owners = db.user
 		.getAll()
@@ -63,7 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function AddPetRoute() {
-	const { owners }: { owners: Owner[] } = useLoaderData<typeof loader>()
+	const { owners } = useLoaderData<typeof loader>()
 
 	return <AddPetModal owners={owners} />
 }
