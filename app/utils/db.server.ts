@@ -34,20 +34,18 @@ export const db = singleton('db', () => {
 			bookedBy: oneOf('user'),
 			dateStart: Date,
 			dateEnd: Date,
-			bookingRefrence: String,
+			bookingRefrence: getId,
 			pets: manyOf('pet'),
 		},
 	})
 
 	const userLiam = db.user.create({
-		id: '9d6eba59daa2fc2078cf8205cd451041',
 		email: 'dev_lime@protonmail.com',
 		username: 'D3VL1M3',
 		name: 'Liam',
 	})
 
 	const userGema = db.user.create({
-		id: '9n3nbs05jdns9ba9239kc02847js5938',
 		email: 'dev_lime@pm.me',
 		username: 'G3M4',
 		name: 'Gema',
@@ -55,22 +53,18 @@ export const db = singleton('db', () => {
 
 	const pets = [
 		{
-			id: 'd27a197e',
 			name: 'Choji',
 			owners: [userLiam],
 		},
 		{
-			id: 'v27b3453',
 			name: 'Stitch',
 			owners: [userGema],
 		},
 		{
-			id: 'j943hs96',
 			name: 'Bombhead',
 			owners: [userGema],
 		},
 		{
-			id: 'mk6094sh',
 			name: 'Blue',
 			owners: [userGema],
 		},
@@ -95,16 +89,35 @@ export const db = singleton('db', () => {
 		},
 	})
 
-	invariantResponse(choji, 'Choji was not found when hydrating the DB!')
-
-	db.booking.create({
-		id: '84jhsop947b2b2950kdsbnn383j2j2j2',
-		bookingRefrence: 'DG-4730as',
-		dateStart: addDays(3).toDateString(),
-		dateEnd: addDays(4).toDateString(),
-		bookedBy: userLiam,
-		pets: [choji],
+	const bombhead = db.pet.findFirst({
+		where: {
+			name: {
+				equals: 'Bombhead',
+			},
+		},
 	})
+
+	invariantResponse(choji, 'Choji was not found when hydrating the DB!')
+	invariantResponse(bombhead, 'Bombhead was not found when hydrating the DB!')
+
+	const bookings = [
+		{
+			dateStart: addDays(3).toDateString(),
+			dateEnd: addDays(4).toDateString(),
+			bookedBy: userLiam,
+			pets: [choji],
+		},
+		{
+			dateStart: addDays(10).toDateString(),
+			dateEnd: addDays(12).toDateString(),
+			bookedBy: userGema,
+			pets: [bombhead],
+		},
+	]
+
+	for (const booking of bookings) {
+		db.booking.create(booking)
+	}
 
 	return db
 })
