@@ -4,9 +4,8 @@ import { db } from '~/utils/db.server'
 export function loader() {
 	const bookings = db.booking
 		.getAll()
-		.map(({ id, bookedBy, bookingRefrence, dateEnd, dateStart, pets }) => ({
+		.map(({ id, bookingRefrence, dateEnd, dateStart, pets }) => ({
 			id,
-			bookedBy,
 			bookingRefrence,
 			dateEnd,
 			dateStart,
