@@ -4,7 +4,7 @@ import {
 	redirect,
 } from '@remix-run/node'
 import { useLoaderData, json } from '@remix-run/react'
-import { deleteUserModalUserDetailsPage } from '~/routes'
+import { userDetailsPage } from '~/routes'
 import { DeleteUserModal } from '~/routes/users+/components/deleteUserModal/deleteUserModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -45,9 +45,6 @@ export function action({ params }: ActionFunctionArgs) {
 export default function DeleteUserRoute() {
 	const { user } = useLoaderData<typeof loader>()
 	return (
-		<DeleteUserModal
-			name={user.name}
-			onCloseRoute={deleteUserModalUserDetailsPage(user.id)}
-		/>
+		<DeleteUserModal name={user.name} onCloseRoute={userDetailsPage(user.id)} />
 	)
 }

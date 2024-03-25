@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node'
-import { addUserModalUsersListPage } from '~/routes'
+import { usersListPage } from '~/routes'
 import { AddUserModal } from '~/routes/users+/components/addUserModal/addUserModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -26,5 +26,5 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function AddUserRoute() {
-	return <AddUserModal onCloseRoute={addUserModalUsersListPage} />
+	return <AddUserModal onCloseRoute={usersListPage} />
 }

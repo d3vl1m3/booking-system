@@ -4,7 +4,7 @@ import {
 	json,
 	redirect,
 } from '@remix-run/node'
-import { useFormAction, useLoaderData } from '@remix-run/react'
+import { useLoaderData } from '@remix-run/react'
 import { petDetailsPage } from '~/routes'
 import { UpdatePetModal } from '~/routes/pets+/components/modals/updatePetModal/updatePetModal'
 import { db } from '~/utils/db.server'

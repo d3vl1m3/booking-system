@@ -1,6 +1,6 @@
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { petsListPage } from '~/routes'
+import { bookingsListPage } from '~/routes'
 import { AddBookingModal } from '~/routes/bookings+/components/modals/addBookingModal/addBookingModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -51,5 +51,5 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function AddBookingRoute() {
 	const { pets } = useLoaderData<typeof loader>()
 
-	return <AddBookingModal pets={pets} onCloseRoute={petsListPage} />
+	return <AddBookingModal pets={pets} onCloseRoute={bookingsListPage} />
 }
