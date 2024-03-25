@@ -1,4 +1,5 @@
 import { Link, Outlet, json, useLoaderData } from '@remix-run/react'
+import { addBookingModalBookingsListPage } from '~/routes'
 import { db } from '~/utils/db.server'
 
 export function loader() {
@@ -25,7 +26,7 @@ export default function BookingsListPage() {
 			<h1>Bookings</h1>
 			<ul>
 				<li>
-					<Link to="./add">Add booking</Link>
+					<Link to={addBookingModalBookingsListPage}>Add booking</Link>
 				</li>
 			</ul>
 			{bookings.length ? (

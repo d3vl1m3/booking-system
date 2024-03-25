@@ -1,5 +1,6 @@
-import { Form } from '@remix-run/react'
+import { Form, Path } from '@remix-run/react'
 import { RouteBasedModal } from '~/components/RouteBasedModal/routeBasedModal'
+import { petsListPage } from '~/routes'
 
 type Pet = {
 	id: string
@@ -8,11 +9,15 @@ type Pet = {
 
 type AddBookingModalProps = {
 	pets: Pet[]
+	onCloseRoute: string | Partial<Path>
 }
 
-export const AddBookingModal = ({ pets }: AddBookingModalProps) => {
+export const AddBookingModal = ({
+	pets,
+	onCloseRoute,
+}: AddBookingModalProps) => {
 	return (
-		<RouteBasedModal>
+		<RouteBasedModal onCloseRoute={onCloseRoute}>
 			<h1>Add Booking</h1>
 			<Form method="POST">
 				<div>
