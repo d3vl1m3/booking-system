@@ -4,7 +4,8 @@ import {
 	json,
 	redirect,
 } from '@remix-run/node'
-import { useFormAction, useLoaderData } from '@remix-run/react'
+import { useLoaderData } from '@remix-run/react'
+import { userDetailsPage } from '~/routes'
 import { UpdateUserModal } from '~/routes/users+/components/updateUserModal/updateUserModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -28,6 +29,7 @@ export function loader({ params }: LoaderFunctionArgs) {
 	return json({
 		user: {
 			name: user.name,
+			id: user.id,
 		},
 		owners,
 	})
@@ -59,5 +61,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 export default function UpdateUserRoute() {
 	const { user } = useLoaderData<typeof loader>()
 
-	return <UpdateUserModal name={user.name} />
+	return (
+		<UpdateUserModal name={user.name} onCloseRoute={userDetailsPage(user.id)} />
+	)
 }

@@ -1,9 +1,13 @@
-import { Form } from '@remix-run/react'
+import { Form, Path } from '@remix-run/react'
 import { RouteBasedModal } from '~/components/RouteBasedModal/routeBasedModal'
 
-export const AddUserModal = () => {
+export const AddUserModal = ({
+	onCloseRoute,
+}: {
+	onCloseRoute: string | Partial<Path>
+}) => {
 	return (
-		<RouteBasedModal>
+		<RouteBasedModal onCloseRoute={onCloseRoute}>
 			<h1>Add User</h1>
 			<Form method="POST">
 				<div>

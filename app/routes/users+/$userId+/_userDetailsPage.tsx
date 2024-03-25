@@ -4,6 +4,12 @@ import { db } from '~/utils/db.server'
 import { LoaderFunctionArgs, json } from '@remix-run/node'
 import { GeneralErrorBoundary } from '~/components/generalErrorBoundary'
 import { invariantResponse } from '~/utils/misc'
+import {
+	deleteUserModalUserDetailsPage,
+	petDetailsPage,
+	updateUserModalUserDetailsPage,
+	usersListPage,
+} from '~/routes'
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const user = db.user.findFirst({
@@ -43,14 +49,14 @@ export default function UserDetailsPage() {
 		<>
 			<h1>{user.name}&#39;s profile</h1>
 			<p>
-				<Link to="/users">Back to Users List</Link>
+				<Link to={usersListPage}>Back to Users List</Link>
 			</p>
 			<ul>
 				<li>
-					<Link to="./update">Update User</Link>
+					<Link to={updateUserModalUserDetailsPage(user.id)}>Update User</Link>
 				</li>
 				<li>
-					<Link to="./delete">Delete User</Link>
+					<Link to={deleteUserModalUserDetailsPage(user.id)}>Delete User</Link>
 				</li>
 			</ul>
 			<p>User ID: {user.id}</p>
@@ -62,7 +68,7 @@ export default function UserDetailsPage() {
 					<ul>
 						{user.pets.map(pet => (
 							<li key={pet.id}>
-								<Link to={`/pets/${pet.id}`}>{pet.name}</Link>
+								<Link to={petDetailsPage(pet.id)}>{pet.name}</Link>
 							</li>
 						))}
 					</ul>
