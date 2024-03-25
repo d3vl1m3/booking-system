@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs, json } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
-import { bookingsListPage } from '~/routes'
+import { bookingsListPage, petDetailsPage } from '~/routes'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
@@ -57,7 +57,7 @@ export default function BookingDetailsPage() {
 								<ul>
 									{booking.pets.map(pet => (
 										<li key={pet.id}>
-											<Link to={`pets/${pet.id}`}>{pet.name}</Link>
+											<Link to={petDetailsPage(pet.id)}>{pet.name}</Link>
 										</li>
 									))}
 								</ul>

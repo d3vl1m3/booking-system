@@ -1,5 +1,5 @@
 import { Link, Outlet, json, useLoaderData } from '@remix-run/react'
-import { addBookingModalBookingsListPage } from '~/routes'
+import { addBookingModalBookingsListPage, bookingDetailsPage } from '~/routes'
 import { db } from '~/utils/db.server'
 
 export function loader() {
@@ -40,7 +40,9 @@ export default function BookingsListPage() {
 					{bookings.map(booking => (
 						<tr key={booking.id}>
 							<td>
-								<Link to={`./${booking.id}`}>{booking.bookingRefrence}</Link>
+								<Link to={`${bookingDetailsPage(booking.id)}`}>
+									{booking.bookingRefrence}
+								</Link>
 							</td>
 							<td>{booking.pets.map(({ name }) => name).join(', ')}</td>
 							<td>{booking.dateStart}</td>
