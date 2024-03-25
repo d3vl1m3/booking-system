@@ -1,5 +1,6 @@
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
+import { petsListPage } from '~/routes'
 import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPetModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -60,5 +61,5 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function AddPetRoute() {
 	const { owners } = useLoaderData<typeof loader>()
 
-	return <AddPetModal owners={owners} />
+	return <AddPetModal owners={owners} onCloseRoute={petsListPage} />
 }

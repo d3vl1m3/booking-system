@@ -4,6 +4,7 @@ import {
 	redirect,
 } from '@remix-run/node'
 import { useLoaderData, json } from '@remix-run/react'
+import { petDetailsPage } from '~/routes'
 import { DeletePetModal } from '~/routes/pets+/components/modals/deletePetModal/deletePetModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -43,5 +44,5 @@ export function action({ params }: ActionFunctionArgs) {
 
 export default function DeletePetRoute() {
 	const { pet } = useLoaderData<typeof loader>()
-	return <DeletePetModal pet={pet} />
+	return <DeletePetModal pet={pet} onCloseRoute={petDetailsPage(pet.id)} />
 }

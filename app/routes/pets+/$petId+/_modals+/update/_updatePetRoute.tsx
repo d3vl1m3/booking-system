@@ -5,6 +5,7 @@ import {
 	redirect,
 } from '@remix-run/node'
 import { useFormAction, useLoaderData } from '@remix-run/react'
+import { petDetailsPage } from '~/routes'
 import { UpdatePetModal } from '~/routes/pets+/components/modals/updatePetModal/updatePetModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -27,6 +28,7 @@ export function loader({ params }: LoaderFunctionArgs) {
 
 	return json({
 		pet: {
+			id: pet.id,
 			name: pet.name,
 			owners: pet.owners,
 		},
@@ -79,6 +81,7 @@ export default function UpdatePetRoute() {
 			name={pet.name}
 			owner={pet.owners?.[0]}
 			ownerOptions={owners}
+			onCloseRoute={petDetailsPage(pet.id)}
 		/>
 	)
 }

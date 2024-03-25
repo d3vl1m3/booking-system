@@ -2,6 +2,12 @@ import { LoaderFunctionArgs, json } from '@remix-run/node'
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import { invariantResponse } from '~/utils/misc'
 import { db } from '~/utils/db.server'
+import {
+	deletePetModalPetDetailsPage,
+	petsListPage,
+	updatePetModalPetDetailsPage,
+	userDetailsPage,
+} from '~/routes'
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const pet = db.pet.findFirst({
@@ -31,20 +37,20 @@ export default function PetInfoPage() {
 			<h1>{pet.name}&#39;s info</h1>
 			<ul>
 				<li>
-					<Link to="./..">Back to Pets List</Link>
+					<Link to={petsListPage}>Back to Pets List</Link>
 				</li>
 				<li>
-					<Link to="./update">Update Pet</Link>
+					<Link to={updatePetModalPetDetailsPage(pet.id)}>Update Pet</Link>
 				</li>
 				<li>
-					<Link to="./delete">Delete Pet</Link>
+					<Link to={deletePetModalPetDetailsPage(pet.id)}>Delete Pet</Link>
 				</li>
 			</ul>
 			<p>Pet ID: {pet.id}</p>
 			<p>Owners:</p>
 			<ul>
 				{pet.owners.map(owner => (
-					<Link key={owner.id} to={`/users/${owner.username}`}>
+					<Link key={owner.id} to={userDetailsPage(owner.id)}>
 						{owner.name}
 					</Link>
 				))}

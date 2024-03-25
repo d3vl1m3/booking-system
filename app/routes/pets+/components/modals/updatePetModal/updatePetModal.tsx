@@ -1,4 +1,4 @@
-import { Form } from '@remix-run/react'
+import { Form, Path } from '@remix-run/react'
 import { RouteBasedModal } from '~/components/RouteBasedModal/routeBasedModal'
 
 type Owner = {
@@ -10,15 +10,17 @@ type UpdateModalProps = {
 	name: string
 	owner: Owner
 	ownerOptions: Owner[]
+	onCloseRoute: string | Partial<Path>
 }
 
 export const UpdatePetModal = ({
 	name,
 	owner,
 	ownerOptions,
+	onCloseRoute,
 }: UpdateModalProps) => {
 	return (
-		<RouteBasedModal>
+		<RouteBasedModal onCloseRoute={onCloseRoute}>
 			<h1>Update Pet</h1>
 			<Form method="POST">
 				<div>
