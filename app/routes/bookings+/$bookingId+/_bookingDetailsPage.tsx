@@ -1,6 +1,10 @@
 import { LoaderFunctionArgs, json } from '@remix-run/node'
-import { Link, useLoaderData } from '@remix-run/react'
-import { bookingsListPage, petDetailsPage } from '~/routes'
+import { Link, Outlet, useLoaderData } from '@remix-run/react'
+import {
+	bookingsListPage,
+	petDetailsPage,
+	updateBookingModalBookingDetailsPage,
+} from '~/routes'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
@@ -31,9 +35,18 @@ export default function BookingDetailsPage() {
 	return (
 		<>
 			<h1>Booking #{booking.bookingRefrence}</h1>
-			<p>
-				<Link to={bookingsListPage}>Back to Bookings Page</Link>
-			</p>
+
+			<ul>
+				<li>
+					<Link to={bookingsListPage}>Back to Bookings Page</Link>
+				</li>
+				<li>
+					<Link to={updateBookingModalBookingDetailsPage(booking.id)}>
+						Update booking
+					</Link>
+				</li>
+			</ul>
+			<p></p>
 			<table>
 				<tbody>
 					<tr>
@@ -68,6 +81,7 @@ export default function BookingDetailsPage() {
 					</tr>
 				</tbody>
 			</table>
+			<Outlet />
 		</>
 	)
 }
