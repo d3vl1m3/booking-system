@@ -4,16 +4,16 @@ import {
 	redirect,
 } from '@remix-run/node'
 import { useLoaderData, json } from '@remix-run/react'
-import { usersListPage } from '~/routes'
-import { DeleteUserModal } from '~/routes/users+/components/deleteUserModal/deleteUserModal'
+import { bookingsListPage } from '~/routes'
+import { DeleteBookingModal } from '~/routes/bookings+/components/modals/deleteBookingModal/deleteBookingModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
 export function loader({ params }: LoaderFunctionArgs) {
-	const user = db.user.findFirst({
+	const user = db.booking.findFirst({
 		where: {
 			id: {
-				equals: params.userId,
+				equals: params.bookingId,
 			},
 		},
 	})
@@ -21,20 +21,19 @@ export function loader({ params }: LoaderFunctionArgs) {
 	invariantResponse(user, 'User not found')
 
 	return json({
-		user: {
-			name: user.name,
+		booking: {
 			id: user.id,
 		},
 	})
 }
 
 export function action({ params }: ActionFunctionArgs) {
-	const { userId } = params
+	const { bookingId } = params
 
-	db.user.delete({
+	db.booking.delete({
 		where: {
 			id: {
-				equals: userId,
+				equals: bookingId,
 			},
 		},
 	})
@@ -43,6 +42,11 @@ export function action({ params }: ActionFunctionArgs) {
 }
 
 export default function DeleteUserRoute() {
-	const { user } = useLoaderData<typeof loader>()
-	return <DeleteUserModal name={user.name} onCloseRoute={usersListPage} />
+	const { booking } = useLoaderData<typeof loader>()
+	return (
+		<DeleteBookingModal
+			bookingId={booking.id}
+			onCloseRoute={bookingsListPage}
+		/>
+	)
 }
