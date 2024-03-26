@@ -30,11 +30,14 @@ export function loader({ params }: LoaderFunctionArgs) {
 export function action({ params }: ActionFunctionArgs) {
 	const { bookingId } = params
 
-	db.booking.delete({
+	db.booking.update({
 		where: {
 			id: {
 				equals: bookingId,
 			},
+		},
+		data: {
+			cancelled: true,
 		},
 	})
 

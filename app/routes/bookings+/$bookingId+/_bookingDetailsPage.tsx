@@ -26,6 +26,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			dateEnd: booking.dateEnd,
 			dateStart: booking.dateStart,
 			pets: booking.pets,
+			cancelled: booking.cancelled,
 		},
 	})
 }
@@ -35,6 +36,10 @@ export default function BookingDetailsPage() {
 	return (
 		<>
 			<h1>Booking #{booking.bookingRefrence}</h1>
+
+			<p>
+				<span>{booking.cancelled ? 'Cancelled' : 'Active'}</span>
+			</p>
 
 			<ul>
 				<li>

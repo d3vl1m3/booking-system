@@ -31,6 +31,7 @@ export const db = singleton('db', () => {
 			id: primaryKey(getId),
 			createdAt: () => new Date(),
 
+			cancelled: nullable(Boolean),
 			dateStart: Date,
 			dateEnd: Date,
 			bookingRefrence: getId,
