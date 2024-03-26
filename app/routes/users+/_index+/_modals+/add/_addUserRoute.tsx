@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node'
-import { usersListPage } from '~/routes'
+import { userDetailsPage, usersListPage } from '~/routes'
 import { AddUserModal } from '~/routes/users+/components/addUserModal/addUserModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -22,7 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	invariantResponse(user, 'Failed to create user', { status: 409 })
 
-	return redirect('/users')
+	return redirect(userDetailsPage(user.id))
 }
 
 export default function AddUserRoute() {

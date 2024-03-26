@@ -4,7 +4,7 @@ import {
 	redirect,
 } from '@remix-run/node'
 import { useLoaderData, json } from '@remix-run/react'
-import { bookingsListPage } from '~/routes'
+import { bookingDetailsPage, bookingsListPage } from '~/routes'
 import { DeleteBookingModal } from '~/routes/bookings+/components/modals/deleteBookingModal/deleteBookingModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -38,7 +38,7 @@ export function action({ params }: ActionFunctionArgs) {
 		},
 	})
 
-	return redirect('/users')
+	return redirect(bookingsListPage)
 }
 
 export default function DeleteUserRoute() {
@@ -46,7 +46,7 @@ export default function DeleteUserRoute() {
 	return (
 		<DeleteBookingModal
 			bookingId={booking.id}
-			onCloseRoute={bookingsListPage}
+			onCloseRoute={bookingDetailsPage(booking.id)}
 		/>
 	)
 }

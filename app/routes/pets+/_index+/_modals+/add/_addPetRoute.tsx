@@ -1,6 +1,6 @@
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { petsListPage } from '~/routes'
+import { petDetailsPage, petsListPage } from '~/routes'
 import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPetModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -55,7 +55,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	invariantResponse(pet, 'Failed to create pet', { status: 409 })
 
-	return redirect('/pets')
+	return redirect(petDetailsPage(pet.id))
 }
 
 export default function AddPetRoute() {

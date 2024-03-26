@@ -5,7 +5,7 @@ import {
 	redirect,
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { bookingDetailsPage, bookingsListPage } from '~/routes'
+import { bookingDetailsPage } from '~/routes'
 import { UpdateBookingModal } from '~/routes/bookings+/components/modals/updateBookingModal/updateBookingModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -75,7 +75,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 	invariantResponse(booking, 'Failed to create booking', { status: 409 })
 
-	return redirect('/bookings')
+	return redirect(bookingDetailsPage(booking.id))
 }
 
 export default function UpdateBookingRoute() {

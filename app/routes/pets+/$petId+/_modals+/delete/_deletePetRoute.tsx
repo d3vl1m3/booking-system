@@ -4,7 +4,7 @@ import {
 	redirect,
 } from '@remix-run/node'
 import { useLoaderData, json } from '@remix-run/react'
-import { petDetailsPage } from '~/routes'
+import { petDetailsPage, petsListPage } from '~/routes'
 import { DeletePetModal } from '~/routes/pets+/components/modals/deletePetModal/deletePetModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
@@ -39,7 +39,7 @@ export function action({ params }: ActionFunctionArgs) {
 		},
 	})
 
-	return redirect('/pets')
+	return redirect(petsListPage)
 }
 
 export default function DeletePetRoute() {
