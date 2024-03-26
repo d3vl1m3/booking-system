@@ -1,5 +1,5 @@
 import { Form, Path } from '@remix-run/react'
-import { RouteBasedModal } from '~/components/RouteBasedModal/routeBasedModal'
+import { RouteBasedModal } from '~/components/routeBasedModal/routeBasedModal'
 
 type DeleteUserModalProps = {
 	bookingId: string
