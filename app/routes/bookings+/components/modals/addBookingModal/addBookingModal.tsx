@@ -1,6 +1,5 @@
 import { Form, Path } from '@remix-run/react'
 import { RouteBasedModal } from '~/components/routeBasedModal/routeBasedModal'
-import { petsListPage } from '~/routes'
 
 type Pet = {
 	id: string
@@ -8,13 +7,14 @@ type Pet = {
 }
 
 type AddBookingModalProps = {
-	pets: Pet[]
+	isPending: boolean
 	onCloseRoute: string | Partial<Path>
+	pets: Pet[]
 }
 
 export const AddBookingModal = ({
-	pets,
 	onCloseRoute,
+	pets,
 }: AddBookingModalProps) => {
 	return (
 		<RouteBasedModal onCloseRoute={onCloseRoute}>
@@ -24,7 +24,9 @@ export const AddBookingModal = ({
 					<label htmlFor="pet">Pet: </label>
 					<select name="petId">
 						{pets.map(pet => (
-							<option value={pet.id}>{pet.name}</option>
+							<option key={pet.id} value={pet.id}>
+								{pet.name}
+							</option>
 						))}
 					</select>
 				</div>
