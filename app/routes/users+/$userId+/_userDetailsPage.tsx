@@ -2,7 +2,6 @@ import { Link, Outlet, useLoaderData } from '@remix-run/react'
 
 import { db } from '~/utils/db.server'
 import { LoaderFunctionArgs, json } from '@remix-run/node'
-import { GeneralErrorBoundary } from '~/components/generalErrorBoundary'
 import { invariantResponse } from '~/utils/misc'
 import {
 	deleteUserModalUserDetailsPage,
@@ -10,6 +9,7 @@ import {
 	updateUserModalUserDetailsPage,
 	usersListPage,
 } from '~/routes'
+import { GeneralErrorBoundary } from '~/components/generalErrorBoundary/generalErrorBoundary'
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const user = db.user.findFirst({
