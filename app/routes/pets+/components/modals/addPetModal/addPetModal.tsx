@@ -17,6 +17,24 @@ const useHydrate = () => {
 	return { hydrated }
 }
 
+function ErrorList({
+	id,
+	errors,
+}: {
+	id?: string
+	errors?: Array<string> | null
+}) {
+	return errors?.length ? (
+		<ul id={id} className="flex flex-col gap-1">
+			{errors.map((error, i) => (
+				<li key={i} className="text-[10px] text-foreground-destructive">
+					{error}
+				</li>
+			))}
+		</ul>
+	) : null
+}
+
 export const AddPetModal = ({
 	fieldErrors,
 	onCloseRoute,
@@ -49,13 +67,7 @@ export const AddPetModal = ({
 					</label>
 					<input type="text" name="name" id="name" required />
 					<br />
-					{fieldErrors?.name?.length ? (
-						<div>
-							<span className="text-red-600" id="name-errors">
-								{fieldErrors.name[0]}
-							</span>
-						</div>
-					) : null}
+					<ErrorList errors={fieldErrors?.name} />
 				</div>
 				<div>
 					<label htmlFor="owner">Owner: </label>
@@ -66,6 +78,7 @@ export const AddPetModal = ({
 							</option>
 						))}
 					</select>
+					<ErrorList errors={fieldErrors?.owner} />
 				</div>
 				<button type="submit" className="btn">
 					Save
