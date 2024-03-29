@@ -7,7 +7,7 @@ import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPet
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-const AddPetFormSchema = z.object({
+export const AddPetFormSchema = z.object({
 	name: z.string().min(1),
 	owner: z.string().min(1),
 })
@@ -33,16 +33,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const { name, owner: ownerId } = submission.value
 
-	const owner =
-		typeof ownerId === 'string'
-			? db.user.findFirst({
-					where: {
-						id: {
-							equals: ownerId,
-						},
-					},
-			  })
-			: null
+	const owner = db.user.findFirst({
+		where: {
+			id: {
+				equals: ownerId,
+			},
+		},
+	})
 
 	invariantResponse(owner, 'Owner not found')
 
@@ -62,10 +59,9 @@ export default function AddPetRoute() {
 
 	return (
 		<AddPetModal
+			actionData={actionData}
 			owners={owners}
 			onCloseRoute={petsListPage}
-			fieldErrors={actionData?.submission.error}
-			formErrors={actionData?.submission.error?.['']}
 		/>
 	)
 }

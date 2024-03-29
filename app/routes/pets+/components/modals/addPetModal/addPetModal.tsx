@@ -1,20 +1,27 @@
+import {
+	getFormProps,
+	useForm,
+	getInputProps,
+	getSelectProps,
+} from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { SerializeFrom } from '@remix-run/node'
 import { Form, Path } from '@remix-run/react'
-import { useEffect, useState } from 'react'
 import { RouteBasedModal } from '~/components/routeBasedModal/routeBasedModal'
+import {
+	AddPetFormSchema,
+	action,
+} from '~/routes/pets+/_index+/_modals+/add/_addPetRoute'
 
 type Owner = {
 	id: string
 	name: string
 }
 
-const useHydrate = () => {
-	const [hydrated, setHydrated] = useState(false)
-
-	useEffect(() => {
-		setHydrated(true)
-	}, [])
-
-	return { hydrated }
+type AddPetModalProps = {
+	actionData: SerializeFrom<typeof action> | undefined
+	owners: Owner[]
+	onCloseRoute: string | Partial<Path>
 }
 
 function ErrorList({
@@ -36,53 +43,54 @@ function ErrorList({
 }
 
 export const AddPetModal = ({
-	fieldErrors,
+	actionData,
 	onCloseRoute,
 	owners,
-}: {
-	formErrors: string[] | null | undefined
-	fieldErrors:
-		| {
-				name?: string[]
-				owner?: string[]
-		  }
-		| null
-		| undefined
-	owners: Owner[]
-	onCloseRoute: string | Partial<Path>
-}) => {
-	const { hydrated } = useHydrate()
+}: AddPetModalProps) => {
+	const [form, fields] = useForm({
+		id: 'login-form',
+		constraint: getZodConstraint(AddPetFormSchema),
+		lastResult: actionData?.submission.payload,
+		onValidate({ formData }) {
+			return parseWithZod(formData, { schema: AddPetFormSchema })
+		},
+		defaultValue: {
+			name: '',
+			owner: '',
+		},
+	})
+
+	const formProps = getFormProps(form)
+	const nameFieldProps = getInputProps(fields.name, {
+		type: 'text',
+	})
+	const ownerFieldProps = getSelectProps(fields.owner)
 
 	return (
 		<RouteBasedModal onCloseRoute={onCloseRoute}>
 			<h1>Add Pet</h1>
-			<Form method="POST" noValidate={hydrated}>
+			<Form method="POST" {...formProps}>
 				<div>
-					<label
-						htmlFor="name"
-						aria-invalid={fieldErrors?.name ? true : undefined}
-						aria-describedby={fieldErrors?.name ? 'name-errors' : undefined}
-					>
-						Name:{' '}
-					</label>
-					<input type="text" name="name" id="name" required />
+					<label htmlFor={nameFieldProps.id}>Name: </label>
+					<input {...nameFieldProps} />
 					<br />
-					<ErrorList errors={fieldErrors?.name} />
+					<ErrorList id={nameFieldProps.id} errors={fields.name.errors} />
 				</div>
 				<div>
-					<label htmlFor="owner">Owner: </label>
-					<select name="owner" id="owner" required>
+					<label htmlFor={ownerFieldProps.id}>Owner: </label>
+					<select {...ownerFieldProps}>
 						{owners.map(owner => (
 							<option key={owner.id} value={owner.id}>
 								{owner.name}
 							</option>
 						))}
 					</select>
-					<ErrorList errors={fieldErrors?.owner} />
+					<ErrorList id={ownerFieldProps.id} errors={fields.owner.errors} />
 				</div>
 				<button type="submit" className="btn">
 					Save
 				</button>
+				<ErrorList id={formProps.id} errors={form.errors} />
 			</Form>
 		</RouteBasedModal>
 	)
