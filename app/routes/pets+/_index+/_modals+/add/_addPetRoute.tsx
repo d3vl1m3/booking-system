@@ -1,9 +1,15 @@
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { useActionData, useLoaderData } from '@remix-run/react'
+import { z } from 'zod'
 import { petDetailsPage, petsListPage } from '~/routes'
 import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPetModal'
 import { db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
+
+const AddPetFormSchema = z.object({
+	name: z.string().min(1),
+	ownerId: z.string().min(1),
+})
 
 export function loader() {
 	const owners = db.user
@@ -15,25 +21,19 @@ export function loader() {
 
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
-	const formNameValue = formData.get('name')
-	const name = typeof formNameValue === 'string' ? formNameValue : undefined
-	const ownerId = formData.get('owner')
+	const result = AddPetFormSchema.safeParse({
+		name: formData.get('name'),
+		ownerId: formData.get('owner'),
+	})
 
-	invariantResponse(name, 'Pet name required', { status: 422 })
+	if (!result.success) {
+		return json(
+			{ status: 'error', errors: result.error.flatten() },
+			{ status: 400 },
+		)
+	}
 
-	invariantResponse(
-		typeof name === 'string',
-		`Pet name has invlaid value: ${typeof name !== 'string'}`,
-		{ status: 422 },
-	)
-
-	invariantResponse(
-		typeof ownerId === 'string',
-		`Owner ID has invlaid value: ${typeof ownerId !== 'string'}`,
-		{ status: 422 },
-	)
-
-	invariantResponse(ownerId, 'Owner ID required', { status: 422 })
+	const { name, ownerId } = result.data
 
 	const owner =
 		typeof ownerId === 'string'
@@ -60,6 +60,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function AddPetRoute() {
 	const { owners } = useLoaderData<typeof loader>()
+	const actionData = useActionData<typeof action>()
 
-	return <AddPetModal owners={owners} onCloseRoute={petsListPage} />
+	return (
+		<AddPetModal
+			owners={owners}
+			onCloseRoute={petsListPage}
+			errors={actionData?.errors}
+		/>
+	)
 }
