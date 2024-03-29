@@ -7,14 +7,6 @@ type Owner = {
 	name: string
 }
 
-type Errors = {
-	fieldErrors: {
-		name?: string[]
-		ownerId?: string[]
-	}
-	formErrors: string[]
-}
-
 const useHydrate = () => {
 	const [hydrated, setHydrated] = useState(false)
 
@@ -26,13 +18,20 @@ const useHydrate = () => {
 }
 
 export const AddPetModal = ({
-	owners,
+	fieldErrors,
 	onCloseRoute,
-	errors,
+	owners,
 }: {
+	formErrors: string[] | null | undefined
+	fieldErrors:
+		| {
+				name?: string[]
+				owner?: string[]
+		  }
+		| null
+		| undefined
 	owners: Owner[]
 	onCloseRoute: string | Partial<Path>
-	errors?: Errors
 }) => {
 	const { hydrated } = useHydrate()
 
@@ -43,19 +42,17 @@ export const AddPetModal = ({
 				<div>
 					<label
 						htmlFor="name"
-						aria-invalid={errors?.fieldErrors?.name ? true : undefined}
-						aria-describedby={
-							errors?.fieldErrors?.name ? 'name-errors' : undefined
-						}
+						aria-invalid={fieldErrors?.name ? true : undefined}
+						aria-describedby={fieldErrors?.name ? 'name-errors' : undefined}
 					>
 						Name:{' '}
 					</label>
 					<input type="text" name="name" id="name" required />
 					<br />
-					{errors?.fieldErrors.name?.length ? (
+					{fieldErrors?.name?.length ? (
 						<div>
 							<span className="text-red-600" id="name-errors">
-								{errors.fieldErrors.name[0]}
+								{fieldErrors.name[0]}
 							</span>
 						</div>
 					) : null}

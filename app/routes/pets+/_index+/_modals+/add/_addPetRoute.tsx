@@ -1,3 +1,4 @@
+import { parseWithZod } from '@conform-to/zod'
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node'
 import { useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
@@ -8,7 +9,7 @@ import { invariantResponse } from '~/utils/misc'
 
 const AddPetFormSchema = z.object({
 	name: z.string().min(1),
-	ownerId: z.string().min(1),
+	owner: z.string().min(1),
 })
 
 export function loader() {
@@ -21,19 +22,16 @@ export function loader() {
 
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
-	const result = AddPetFormSchema.safeParse({
-		name: formData.get('name'),
-		ownerId: formData.get('owner'),
+
+	const submission = parseWithZod(formData, {
+		schema: AddPetFormSchema,
 	})
 
-	if (!result.success) {
-		return json(
-			{ status: 'error', errors: result.error.flatten() },
-			{ status: 400 },
-		)
+	if (submission?.status !== 'success') {
+		return json({ status: 'error', submission }, { status: 400 })
 	}
 
-	const { name, ownerId } = result.data
+	const { name, owner: ownerId } = submission.value
 
 	const owner =
 		typeof ownerId === 'string'
@@ -66,7 +64,8 @@ export default function AddPetRoute() {
 		<AddPetModal
 			owners={owners}
 			onCloseRoute={petsListPage}
-			errors={actionData?.errors}
+			fieldErrors={actionData?.submission.error}
+			formErrors={actionData?.submission.error?.['']}
 		/>
 	)
 }
