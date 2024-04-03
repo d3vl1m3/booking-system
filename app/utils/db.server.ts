@@ -131,44 +131,43 @@ export const db = singleton('db', () => {
 	return db
 })
 
-export const uploadImages = async (
-	images: { file: File; id?: string; altText?: string }[],
+export const uploadImage = async (
+	image: { file: File; id?: string; altText?: string },
 ) => {
-	const imagePromosies =
-		images?.map(async (image: any) => {
-			if (!image) return null
+	if (image.id) {
+		const hasReplacement = (image?.file.size || 0) > 0
+		const filepath =
+			image.file && hasReplacement
+				? await writeImage(image.file)
+				: undefined
+		// update the ID so caching is invalidated
+		const id = image.file && hasReplacement ? getId() : image.id
 
-			if (image.id) {
-				const hasReplacement = (image?.file?.size || 0) > 0
-				const filepath =
-					image.file && hasReplacement
-						? await writeImage(image.file)
-						: undefined
-				// update the ID so caching is invalidated
-				const id = image.file && hasReplacement ? getId() : image.id
+		const response = db.image.update({
+			where: { id: { equals: image.id } },
+			data: {
+				id,
+				filepath,
+				altText: image.altText,
+			},
+		})
 
-				return db.image.update({
-					where: { id: { equals: image.id } },
-					data: {
-						id,
-						filepath,
-						altText: image.altText,
-					},
-				})
-			} else if (image.file) {
-				if (image.file.size < 1) return null
-				const filepath = await writeImage(image.file)
-				return db.image.create({
-					altText: image.altText,
-					filepath,
-					contentType: image.file.type,
-				})
-			} else {
-				return null
-			}
-		}) ?? []
+		invariantResponse(response, 'Failed to update Image')
+		
+		return response
+	}
+	
+	if (image.file.size < 1) return null
+	const filepath = await writeImage(image.file)
+	const response = db.image.create({
+		altText: image.altText,
+		filepath,
+		contentType: image.file.type,
+	})
 
-	return await Promise.all(imagePromosies)
+	invariantResponse(response, 'Failed to create Image')
+	
+	return response
 }
 
 async function writeImage(image: File) {
