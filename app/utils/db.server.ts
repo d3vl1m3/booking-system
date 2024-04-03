@@ -10,7 +10,6 @@ import path from 'node:path'
 import { factory, manyOf, nullable, primaryKey } from '@mswjs/data'
 import { singleton } from './singleton.server'
 import { invariantResponse } from '~/utils/misc'
-import { DATABASE_INSTANCE } from '@mswjs/data/lib/glossary'
 
 const getId = () => crypto.randomBytes(16).toString('hex').slice(0, 8)
 
@@ -131,47 +130,45 @@ export const db = singleton('db', () => {
 	return db
 })
 
-export const uploadImage = async (
-	image: { file: File; id?: string; altText?: string },
+export const uploadImages = async (
+	images: { file?: File; id?: string; altText?: string }[],
 ) => {
-	if (image.id) {
-		const hasReplacement = (image?.file.size || 0) > 0
-		const filepath =
-			image.file && hasReplacement
-				? await writeImage(image.file)
-				: undefined
-		// update the ID so caching is invalidated
-		const id = image.file && hasReplacement ? getId() : image.id
+	const uploadedImagePromises = images?.map(async image => {
+		if (!image) return null
 
-		const response = db.image.update({
-			where: { id: { equals: image.id } },
-			data: {
-				id,
-				filepath,
+		if (image.id) {
+			const hasReplacement = (image?.file?.size || 0) > 0
+			const filepath =
+				image.file && hasReplacement ? await writeImage(image.file) : undefined
+			// update the ID so caching is invalidated
+			const id = image.file && hasReplacement ? getId() : image.id
+
+			return db.image.update({
+				where: { id: { equals: image.id } },
+				data: {
+					id,
+					filepath,
+					altText: image.altText,
+				},
+			})
+		} else if (image.file) {
+			if (image?.file.size < 1) return null
+			const filepath = await writeImage(image.file)
+			return db.image.create({
 				altText: image.altText,
-			},
-		})
+				filepath,
+				contentType: image.file.type,
+			})
+		}
 
-		invariantResponse(response, 'Failed to update Image')
-		
-		return response
-	}
-	
-	if (image.file.size < 1) return null
-	const filepath = await writeImage(image.file)
-	const response = db.image.create({
-		altText: image.altText,
-		filepath,
-		contentType: image.file.type,
+		return null
 	})
 
-	invariantResponse(response, 'Failed to create Image')
-	
-	return response
+	return await Promise.all(uploadedImagePromises)
 }
 
 async function writeImage(image: File) {
-	const tmpDir = path.join(os.tmpdir(), 'epic-web', 'images')
+	const tmpDir = path.join(os.tmpdir(), 'assets', 'pet-images')
 	await fs.mkdir(tmpDir, { recursive: true })
 
 	const timestamp = Date.now()

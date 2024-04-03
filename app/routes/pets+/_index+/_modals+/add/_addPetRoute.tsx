@@ -10,7 +10,7 @@ import { useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { petDetailsPage, petsListPage } from '~/routes'
 import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPetModal'
-import { db, uploadImage } from '~/utils/db.server'
+import { db, uploadImages } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		return json({ status: 'error', submission }, { status: 400 })
 	}
 
-	const { name, owner: ownerId, file } = submission.value 
+	const { name, owner: ownerId, file } = submission.value
 
 	const owner = db.user.findFirst({
 		where: {
@@ -57,13 +57,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	invariantResponse(owner, 'Owner not found')
 
-	const image = await uploadImage({ file })
-	const images = [image].filter(Boolean)
-	
+	const images = await uploadImages([{ file }])
 	const pet = db.pet.create({
 		name,
 		owners: [owner],
-		images,
+		images: images.filter(Boolean),
 	})
 
 	invariantResponse(pet, 'Failed to create pet', { status: 409 })
