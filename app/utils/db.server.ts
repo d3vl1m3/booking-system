@@ -3,10 +3,14 @@
  * for the purposes of our workshop. The data modeling workshop will cover
  * the proper database.
  */
-import crypto from 'crypto'
-import { factory, manyOf, nullable, oneOf, primaryKey } from '@mswjs/data'
+import crypto from 'node:crypto'
+import fs from 'node:fs/promises'
+import os from 'node:os'
+import path from 'node:path'
+import { factory, manyOf, nullable, primaryKey } from '@mswjs/data'
 import { singleton } from './singleton.server'
 import { invariantResponse } from '~/utils/misc'
+import { DATABASE_INSTANCE } from '@mswjs/data/lib/glossary'
 
 const getId = () => crypto.randomBytes(16).toString('hex').slice(0, 8)
 
@@ -26,6 +30,7 @@ export const db = singleton('db', () => {
 
 			name: String,
 			owners: manyOf('user'),
+			images: manyOf('image'),
 		},
 		booking: {
 			id: primaryKey(getId),
@@ -37,18 +42,24 @@ export const db = singleton('db', () => {
 			bookingRefrence: getId,
 			pets: manyOf('pet'),
 		},
+		image: {
+			id: primaryKey(getId),
+			filepath: String,
+			contentType: String,
+			altText: nullable(String),
+		},
 	})
 
 	const userLiam = db.user.create({
-		email: 'dev_lime@protonmail.com',
+		email: 'fake.alias+liam@passmail.com',
 		username: 'D3VL1M3',
 		name: 'Liam',
 	})
 
-	const userGema = db.user.create({
-		email: 'dev_lime@pm.me',
-		username: 'G3M4',
-		name: 'Gema',
+	const userDev = db.user.create({
+		email: 'fake.alias+dev@passmail.com',
+		username: 'Dev',
+		name: 'Lime',
 	})
 
 	const pets = [
@@ -57,16 +68,16 @@ export const db = singleton('db', () => {
 			owners: [userLiam],
 		},
 		{
-			name: 'Stitch',
-			owners: [userGema],
+			name: 'Patch',
+			owners: [userDev],
 		},
 		{
-			name: 'Bombhead',
-			owners: [userGema],
+			name: 'Belle',
+			owners: [userDev],
 		},
 		{
-			name: 'Blue',
-			owners: [userGema],
+			name: 'Syra',
+			owners: [userDev],
 		},
 	]
 
@@ -89,16 +100,16 @@ export const db = singleton('db', () => {
 		},
 	})
 
-	const bombhead = db.pet.findFirst({
+	const patch = db.pet.findFirst({
 		where: {
 			name: {
-				equals: 'Bombhead',
+				equals: 'Patch',
 			},
 		},
 	})
 
 	invariantResponse(choji, 'Choji was not found when hydrating the DB!')
-	invariantResponse(bombhead, 'Bombhead was not found when hydrating the DB!')
+	invariantResponse(patch, 'Patch was not found when hydrating the DB!')
 
 	const bookings = [
 		{
@@ -109,7 +120,7 @@ export const db = singleton('db', () => {
 		{
 			dateStart: addDays(10).toDateString(),
 			dateEnd: addDays(12).toDateString(),
-			pets: [bombhead],
+			pets: [patch],
 		},
 	]
 
@@ -119,3 +130,53 @@ export const db = singleton('db', () => {
 
 	return db
 })
+
+export const uploadImages = async (
+	images: { file: File; id?: string; altText?: string }[],
+) => {
+	const imagePromosies =
+		images?.map(async (image: any) => {
+			if (!image) return null
+
+			if (image.id) {
+				const hasReplacement = (image?.file?.size || 0) > 0
+				const filepath =
+					image.file && hasReplacement
+						? await writeImage(image.file)
+						: undefined
+				// update the ID so caching is invalidated
+				const id = image.file && hasReplacement ? getId() : image.id
+
+				return db.image.update({
+					where: { id: { equals: image.id } },
+					data: {
+						id,
+						filepath,
+						altText: image.altText,
+					},
+				})
+			} else if (image.file) {
+				if (image.file.size < 1) return null
+				const filepath = await writeImage(image.file)
+				return db.image.create({
+					altText: image.altText,
+					filepath,
+					contentType: image.file.type,
+				})
+			} else {
+				return null
+			}
+		}) ?? []
+
+	return await Promise.all(imagePromosies)
+}
+
+async function writeImage(image: File) {
+	const tmpDir = path.join(os.tmpdir(), 'epic-web', 'images')
+	await fs.mkdir(tmpDir, { recursive: true })
+
+	const timestamp = Date.now()
+	const filepath = path.join(tmpDir, `${timestamp}.${image.name}`)
+	await fs.writeFile(filepath, Buffer.from(await image.arrayBuffer()))
+	return filepath
+}

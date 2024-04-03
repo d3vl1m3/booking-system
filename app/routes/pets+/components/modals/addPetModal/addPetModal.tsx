@@ -69,12 +69,22 @@ export const AddPetModal = ({
 	return (
 		<RouteBasedModal onCloseRoute={onCloseRoute}>
 			<h1>Add Pet</h1>
-			<Form method="POST" {...formProps}>
+			<Form method="POST" {...formProps} encType="multipart/form-data">
 				<div>
 					<label htmlFor={nameFieldProps.id}>Name: </label>
 					<input {...nameFieldProps} />
 					<br />
 					<ErrorList id={nameFieldProps.id} errors={fields.name.errors} />
+				</div>
+				<div>
+					<label>Image:</label>
+					<input
+						id="image-input"
+						aria-label="Image"
+						type="file"
+						name="file"
+						accept="image/*"
+					/>
 				</div>
 				<div>
 					<label htmlFor={ownerFieldProps.id}>Owner: </label>
