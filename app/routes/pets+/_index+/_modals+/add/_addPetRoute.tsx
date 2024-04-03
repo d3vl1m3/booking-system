@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		return json({ status: 'error', submission }, { status: 400 })
 	}
 
-	const { name, owner: ownerId, file } = submission.value
+	const { name, owner: ownerId, file } = submission.value 
 
 	const owner = db.user.findFirst({
 		where: {
@@ -58,8 +58,8 @@ export async function action({ request }: ActionFunctionArgs) {
 	invariantResponse(owner, 'Owner not found')
 
 	const image = await uploadImage({ file })
-	const images = image ? [image] : []
-
+	const images = [image].filter(Boolean)
+	
 	const pet = db.pet.create({
 		name,
 		owners: [owner],
