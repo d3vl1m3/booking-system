@@ -1,5 +1,4 @@
 import { parseWithZod } from '@conform-to/zod'
-import { ENTITY_TYPE } from '@mswjs/data'
 import {
 	ActionFunctionArgs,
 	json,
@@ -8,10 +7,10 @@ import {
 	unstable_parseMultipartFormData,
 } from '@remix-run/node'
 import { useActionData, useLoaderData } from '@remix-run/react'
-import { boolean, z } from 'zod'
+import { z } from 'zod'
 import { petDetailsPage, petsListPage } from '~/routes'
 import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPetModal'
-import { db, uploadImage, uploadImages } from '~/utils/db.server'
+import { db, uploadImage } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
@@ -55,16 +54,17 @@ export async function action({ request }: ActionFunctionArgs) {
 			},
 		},
 	})
+
 	invariantResponse(owner, 'Owner not found')
 
-const image = await uploadImage({ file }) // image or null
-const images = [image].filter(Boolean)
+	const image = await uploadImage({ file })
+	const images = image ? [image] : []
 
-const pet = db.pet.create({
-	name,
-	owners: [owner],
-	images, // Red squiggly of doom now appears
-})
+	const pet = db.pet.create({
+		name,
+		owners: [owner],
+		images,
+	})
 
 	invariantResponse(pet, 'Failed to create pet', { status: 409 })
 
