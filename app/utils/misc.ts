@@ -1,3 +1,6 @@
+import clsx, { type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
 /**
  * Provide a condition and if that condition is falsey, this throws a 400
  * Response with the given message.
@@ -24,7 +27,7 @@ export function invariantResponse(
 			typeof message === 'function'
 				? message()
 				: message ||
-					'An invariant failed, please provide a message to explain why.',
+				  'An invariant failed, please provide a message to explain why.',
 			{ status: 400, ...responseInit },
 		)
 	}
@@ -45,4 +48,12 @@ export function getErrorMessage(error: unknown) {
 	}
 	console.error('Unable to get error message for error', error)
 	return 'Unknown Error'
+}
+
+/**
+ * A handy utility that makes constructing class names easier.
+ * It also merges tailwind classes.
+ */
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs))
 }
