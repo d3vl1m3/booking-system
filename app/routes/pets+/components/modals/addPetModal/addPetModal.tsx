@@ -66,13 +66,13 @@ export const AddPetModal = ({
 		type: 'text',
 	})
 	const ownerFieldProps = getSelectProps(fields.owner)
-
 	const imagesFieldList = fields.images.getFieldList()
 
 	return (
 		<RouteBasedModal onCloseRoute={onCloseRoute}>
 			<h1>Add Pet</h1>
 			<Form method="POST" {...formProps} encType="multipart/form-data">
+				<button className="hidden" type="submit" aria-hidden />
 				<div>
 					<label htmlFor={nameFieldProps.id}>Name: </label>
 					<input {...nameFieldProps} />
@@ -80,9 +80,31 @@ export const AddPetModal = ({
 					<ErrorList id={nameFieldProps.id} errors={fields.name.errors} />
 				</div>
 				<div>
-					{imagesFieldList.map(imageField => {
-						return <ImageChooser config={imageField} />
+					{imagesFieldList.map((imageField, index) => {
+						return (
+							<>
+								<button
+									className="btn btn-danger"
+									{...form.remove.getButtonProps({
+										name: fields.images.name,
+										index,
+									})}
+								>
+									<span className="sr-only">Delete image</span>
+									<span aria-hidden>❌</span>
+								</button>
+								<ImageChooser config={imageField} />
+							</>
+						)
 					})}
+					<button
+						className="btn"
+						{...form.insert.getButtonProps({
+							name: fields.images.name,
+						})}
+					>
+						<span>➕ Add image</span>
+					</button>
 				</div>
 				<div>
 					<label htmlFor={ownerFieldProps.id}>Owner: </label>
