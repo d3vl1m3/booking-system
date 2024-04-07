@@ -7,6 +7,7 @@ import {
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { SerializeFrom } from '@remix-run/node'
 import { Form, Path } from '@remix-run/react'
+import { ImageChooser } from '~/components/imageChooser/imageChooser'
 import { RouteBasedModal } from '~/components/routeBasedModal/routeBasedModal'
 import {
 	AddPetFormSchema,
@@ -24,14 +25,14 @@ type AddPetModalProps = {
 	onCloseRoute: string | Partial<Path>
 }
 
-function ErrorList({
+const ErrorList = ({
 	id,
 	errors,
 }: {
 	id?: string
 	errors?: Array<string> | null
-}) {
-	return errors?.length ? (
+}) =>
+	errors?.length ? (
 		<ul id={id} className="flex flex-col gap-1">
 			{errors.map((error, i) => (
 				<li key={i} className="text-[10px] text-foreground-destructive">
@@ -40,7 +41,6 @@ function ErrorList({
 			))}
 		</ul>
 	) : null
-}
 
 export const AddPetModal = ({
 	actionData,
@@ -57,6 +57,7 @@ export const AddPetModal = ({
 		defaultValue: {
 			name: '',
 			owner: '',
+			images: [{}],
 		},
 	})
 
@@ -65,6 +66,8 @@ export const AddPetModal = ({
 		type: 'text',
 	})
 	const ownerFieldProps = getSelectProps(fields.owner)
+
+	const imagesFieldList = fields.images.getFieldList()
 
 	return (
 		<RouteBasedModal onCloseRoute={onCloseRoute}>
@@ -77,14 +80,9 @@ export const AddPetModal = ({
 					<ErrorList id={nameFieldProps.id} errors={fields.name.errors} />
 				</div>
 				<div>
-					<label>Image:</label>
-					<input
-						id="image-input"
-						aria-label="Image"
-						type="file"
-						name="file"
-						accept="image/*"
-					/>
+					{imagesFieldList.map(imageField => {
+						return <ImageChooser config={imageField} />
+					})}
 				</div>
 				<div>
 					<label htmlFor={ownerFieldProps.id}>Owner: </label>

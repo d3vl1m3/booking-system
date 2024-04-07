@@ -1,4 +1,5 @@
 import { parseWithZod } from '@conform-to/zod'
+import { identity } from '@mswjs/data'
 import {
 	ActionFunctionArgs,
 	json,
@@ -15,12 +16,20 @@ import { invariantResponse } from '~/utils/misc'
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
 
-export const AddPetFormSchema = z.object({
-	name: z.string().min(1),
-	owner: z.string().min(1),
+export const ImageSchema = z.object({
+	id: z.string(),
 	file: z
 		.instanceof(File)
 		.refine(file => file.size <= MAX_UPLOAD_SIZE, 'File is too large'),
+	altText: z.string().max(50).optional(),
+})
+
+export const ImageFieldsetSchema = z.array(ImageSchema)
+
+export const AddPetFormSchema = z.object({
+	name: z.string().min(1),
+	owner: z.string().min(1),
+	images: ImageFieldsetSchema,
 })
 
 export function loader() {
@@ -45,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		return json({ status: 'error', submission }, { status: 400 })
 	}
 
-	const { name, owner: ownerId, file } = submission.value
+	const { name, owner: ownerId, images } = submission.value
 
 	const owner = db.user.findFirst({
 		where: {
@@ -57,11 +66,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	invariantResponse(owner, 'Owner not found')
 
-	const images = await uploadImages([{ file }])
+	const uploadedImages = await uploadImages(images)
 	const pet = db.pet.create({
 		name,
 		owners: [owner],
-		images: images.filter(Boolean),
+		images: uploadedImages.filter(Boolean),
 	})
 
 	invariantResponse(pet, 'Failed to create pet', { status: 409 })
