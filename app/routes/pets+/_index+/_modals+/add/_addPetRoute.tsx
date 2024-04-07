@@ -17,7 +17,7 @@ import { invariantResponse } from '~/utils/misc'
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
 
 export const ImageSchema = z.object({
-	id: z.string(),
+	id: z.string().optional(),
 	file: z
 		.instanceof(File)
 		.refine(file => file.size <= MAX_UPLOAD_SIZE, 'File is too large'),
