@@ -17,7 +17,9 @@ export default function PetsListPage() {
 			<h1>Pets List Page</h1>
 			<ul>
 				<li>
-					<Link to={addPetModalPetsListPage}>Add Pet</Link>
+					<Link className="btn inline-block" to={addPetModalPetsListPage}>
+						Add Pet
+					</Link>
 				</li>
 			</ul>
 			{pets.length ? (

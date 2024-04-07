@@ -49,13 +49,25 @@ export default function PetInfoPage() {
 				: null}
 			<ul>
 				<li>
-					<Link to={petsListPage}>Back to Pets List</Link>
+					<Link className="btn inline-block" to={petsListPage}>
+						Back to Pets List
+					</Link>
 				</li>
 				<li>
-					<Link to={updatePetModalPetDetailsPage(pet.id)}>Update Pet</Link>
+					<Link
+						className="btn inline-block"
+						to={updatePetModalPetDetailsPage(pet.id)}
+					>
+						Update Pet
+					</Link>
 				</li>
 				<li>
-					<Link to={deletePetModalPetDetailsPage(pet.id)}>Delete Pet</Link>
+					<Link
+						className="btn inline-block"
+						to={deletePetModalPetDetailsPage(pet.id)}
+					>
+						Delete Pet
+					</Link>
 				</li>
 			</ul>
 			<p>Pet ID: {pet.id}</p>
