@@ -7,6 +7,8 @@ import {
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { SerializeFrom } from '@remix-run/node'
 import { Form, Path } from '@remix-run/react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
+import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { ImageChooser } from '~/components/imageChooser/imageChooser'
 import { RouteBasedModal } from '~/components/routeBasedModal/routeBasedModal'
 import {
@@ -73,6 +75,8 @@ export const AddPetModal = ({
 			<h1>Add Pet</h1>
 			<Form method="POST" {...formProps} encType="multipart/form-data">
 				<button className="hidden" type="submit" aria-hidden />
+				<HoneypotInputs />
+				<AuthenticityTokenInput />
 				<div>
 					<label htmlFor={nameFieldProps.id}>Name: </label>
 					<input {...nameFieldProps} />

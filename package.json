@@ -17,11 +17,13 @@
     "@remix-run/react": "^2.8.1",
     "@remix-run/serve": "^2.8.1",
     "clsx": "^2.1.0",
+    "crypto-js": "^4.2.0",
     "isbot": "^4.1.0",
     "msw": "^2.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "^3.16.1",
+    "remix-utils": "^7.6.0",
     "tailwind-merge": "^2.2.2",
     "zod": "^3.22.4"
   },

@@ -1,5 +1,4 @@
 import { parseWithZod } from '@conform-to/zod'
-import { identity } from '@mswjs/data'
 import {
 	ActionFunctionArgs,
 	json,
@@ -11,7 +10,9 @@ import { useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { petDetailsPage, petsListPage } from '~/routes'
 import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPetModal'
+import { validateCSRF } from '~/utils/csrf.server'
 import { db, uploadImages } from '~/utils/db.server'
+import { validateHoneypot } from '~/utils/honeypot.server'
 import { invariantResponse } from '~/utils/misc'
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
@@ -45,6 +46,9 @@ export async function action({ request }: ActionFunctionArgs) {
 		request,
 		unstable_createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
 	)
+
+	await validateCSRF(formData, request.headers)
+	await validateHoneypot(formData)
 
 	const submission = parseWithZod(formData, {
 		schema: AddPetFormSchema,
