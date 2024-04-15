@@ -10,7 +10,49 @@ import path from 'node:path'
 import { factory, manyOf, nullable, primaryKey } from '@mswjs/data'
 import { singleton } from './singleton.server'
 import { invariantResponse } from '~/utils/misc'
+import { PrismaClient } from '@prisma/client'
+import chalk from 'chalk'
 
+export const prisma = singleton('prisma-client', () => {
+	const logThreshold = 25
+	const client = new PrismaClient({
+		log: [
+			{ level: 'query', emit: 'event' },
+			{ level: 'error', emit: 'stdout' },
+			{ level: 'warn', emit: 'stdout' },
+			{ level: 'info', emit: 'stdout' },
+		],
+	})
+
+	client.$on('query', async e => {
+		if (e.duration < logThreshold) return
+
+		const color = () => {
+			if (e.duration < logThreshold * 1.1) {
+				return 'green'
+			}
+
+			if (e.duration < logThreshold * 1.2) {
+				return 'blue'
+			}
+
+			if (e.duration < logThreshold * 1.3) {
+				return 'yellow'
+			}
+
+			if (e.duration < logThreshold * 1.4) {
+				return 'redBright'
+			}
+
+			return 'red'
+		}
+
+		const dur = chalk[color()](`${e.duration}ms`)
+		console.info(`prisma:query - ${dur} - ${e.query}`)
+	})
+
+	return client
+})
 const getId = () => crypto.randomBytes(16).toString('hex').slice(0, 8)
 
 export const db = singleton('db', () => {
