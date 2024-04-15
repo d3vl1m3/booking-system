@@ -5,30 +5,26 @@ import {
 	petDetailsPage,
 	updateBookingModalBookingDetailsPage,
 } from '~/routes'
-import { db } from '~/utils/db.server'
+import { prisma } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
 export async function loader({ params }: LoaderFunctionArgs) {
-	const booking = db.booking.findFirst({
+	const booking = await prisma.booking.findUnique({
 		where: {
-			id: {
-				equals: params.bookingId,
-			},
+			id: params.bookingId,
+		},
+		select: {
+			id: true,
+			bookingRefrence: true,
+			dateStart: true,
+			dateEnd: true,
+			pet: true,
 		},
 	})
 
 	invariantResponse(booking, 'Pet not found', { status: 404 })
 
-	return json({
-		booking: {
-			id: booking.id,
-			bookingRefrence: booking.bookingRefrence,
-			dateEnd: booking.dateEnd,
-			dateStart: booking.dateStart,
-			pets: booking.pets,
-			cancelled: booking.cancelled,
-		},
-	})
+	return json({ booking })
 }
 
 export default function BookingDetailsPage() {
@@ -36,10 +32,6 @@ export default function BookingDetailsPage() {
 	return (
 		<>
 			<h1>Booking #{booking.bookingRefrence}</h1>
-
-			<p>
-				<span>{booking.cancelled ? 'Cancelled' : 'Active'}</span>
-			</p>
 
 			<ul>
 				<li>
@@ -71,17 +63,9 @@ export default function BookingDetailsPage() {
 							Pets booked
 						</th>
 						<td>
-							{booking.pets.length ? (
-								<ul>
-									{booking.pets.map(pet => (
-										<li key={pet.id}>
-											<Link to={petDetailsPage(pet.id)}>{pet.name}</Link>
-										</li>
-									))}
-								</ul>
-							) : (
-								'No pets booked'
-							)}
+							<Link to={petDetailsPage(booking.pet.id)}>
+								{booking.pet.name}
+							</Link>
 						</td>
 					</tr>
 				</tbody>
