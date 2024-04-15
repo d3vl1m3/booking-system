@@ -1,11 +1,17 @@
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 
-import { db } from '~/utils/db.server'
+import { prisma } from '~/utils/db.server'
 import { json } from '@remix-run/node'
 import { addPetModalPetsListPage, petDetailsPage } from '~/routes'
 
 export async function loader() {
-	const pets = db.pet.getAll().map(({ id, name }) => ({ id, name }))
+	const pets = await prisma.pet.findMany({
+		select: {
+			id: true,
+			name: true,
+		},
+	})
+
 	return json({ pets })
 }
 
