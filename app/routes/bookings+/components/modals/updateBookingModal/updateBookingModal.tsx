@@ -9,8 +9,7 @@ type Pet = {
 type AddBookingModalProps = {
 	endDate: string
 	onCloseRoute: string | Partial<Path>
-	bookedPet: Pet
-	pets: Pet[]
+	pet: Pet
 	startDate: string
 }
 
@@ -27,8 +26,7 @@ function jsDateToDateInputFormat(date = new Date()) {
 export const UpdateBookingModal = ({
 	endDate,
 	onCloseRoute,
-	bookedPet,
-	pets,
+	pet,
 	startDate,
 }: AddBookingModalProps) => {
 	const startDateFormatted = jsDateToDateInputFormat(new Date(startDate))
@@ -40,11 +38,7 @@ export const UpdateBookingModal = ({
 			<Form method="POST">
 				<div>
 					<label htmlFor="pet">Pet: </label>
-					<select name="petId" defaultValue={bookedPet.id}>
-						{pets.map(pet => (
-							<option value={pet.id}>{pet.name}</option>
-						))}
-					</select>
+					<input type="text" name="pet" readOnly defaultValue={pet.name} />
 				</div>
 				<div>
 					<label htmlFor="startDate">Date start: </label>

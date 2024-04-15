@@ -7,30 +7,31 @@ import {
 import { useLoaderData } from '@remix-run/react'
 import { bookingDetailsPage } from '~/routes'
 import { UpdateBookingModal } from '~/routes/bookings+/components/modals/updateBookingModal/updateBookingModal'
-import { db } from '~/utils/db.server'
+import { db, prisma } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-export function loader({ params }: LoaderFunctionArgs) {
-	const booking = db.booking.findFirst({
+export async function loader({ params }: LoaderFunctionArgs) {
+	const booking = await prisma.booking.findUnique({
 		where: {
-			id: {
-				equals: params.bookingId,
+			id: params.bookingId,
+		},
+		select: {
+			id: true,
+			dateStart: true,
+			dateEnd: true,
+			pet: {
+				select: {
+					id: true,
+					name: true,
+				},
 			},
 		},
 	})
 
 	invariantResponse(booking, `No booking found for ID: ${params.bookingId}`)
 
-	const pets = db.pet.getAll().map(({ id, name }) => ({ id, name }))
-
 	return json({
-		pets,
-		booking: {
-			id: booking.id,
-			pet: booking.pets[0],
-			startDate: booking.dateStart,
-			endDate: booking.dateEnd,
-		},
+		booking,
 	})
 }
 
@@ -79,15 +80,14 @@ export async function action({ params, request }: ActionFunctionArgs) {
 }
 
 export default function UpdateBookingRoute() {
-	const { pets, booking } = useLoaderData<typeof loader>()
+	const { booking } = useLoaderData<typeof loader>()
 
 	return (
 		<UpdateBookingModal
-			endDate={booking.endDate}
+			endDate={booking.dateStart}
 			onCloseRoute={bookingDetailsPage(booking.id)}
-			bookedPet={booking.pet}
-			pets={pets}
-			startDate={booking.startDate}
+			pet={booking.pet}
+			startDate={booking.dateEnd}
 		/>
 	)
 }
