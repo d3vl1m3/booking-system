@@ -2,6 +2,8 @@ import fs from 'node:fs'
 import { PrismaClient } from '@prisma/client'
 import { addDaysToDate, generateBookingRef } from './seed-utils'
 
+import { faker } from '@faker-js/faker'
+
 const prisma = new PrismaClient()
 
 // Clear all the current data
@@ -10,12 +12,12 @@ const prisma = new PrismaClient()
 await prisma.user.deleteMany()
 await prisma.pet.deleteMany()
 
-// Create users
-const dave = await prisma.user.create({
+// Create a user
+await prisma.user.create({
 	data: {
-		email: 'dave@fake-mail.not',
-		username: 'dave_89',
-		name: 'Dave',
+		email: faker.internet.email(),
+		username: faker.internet.userName(),
+		name: faker.person.fullName(),
 		pets: {
 			create: [
 				{
@@ -132,12 +134,12 @@ const dave = await prisma.user.create({
 	},
 })
 
-// Create users
-const charlie = await prisma.user.create({
+// Create another user
+await prisma.user.create({
 	data: {
-		email: 'charlie@fake-mail.not',
-		username: 'charlie_92',
-		name: 'Charlie',
+		email: faker.internet.email(),
+		username: faker.internet.userName(),
+		name: faker.person.fullName(),
 		pets: {
 			create: [
 				{

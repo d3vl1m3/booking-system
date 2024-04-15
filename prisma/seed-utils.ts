@@ -15,7 +15,7 @@ export const generateBookingRef = () => {
 	const hexString = randomBuffer.toString('hex')
 
 	// Take the first 16 characters to ensure it's exactly 16 digits
-	const referenceString = hexString.slice(0, 16)
+	const referenceString = hexString.slice(0, 8)
 
-	return referenceString
+	return `REF-${referenceString.toUpperCase()}`
 }
