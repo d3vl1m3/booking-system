@@ -6,11 +6,16 @@ import {
 	bookingsListPage,
 } from '~/routes'
 import { AddBookingModal } from '~/routes/bookings+/components/modals/addBookingModal/addBookingModal'
-import { db } from '~/utils/db.server'
+import { db, prisma } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-export function loader() {
-	const pets = db.pet.getAll().map(({ id, name }) => ({ id, name }))
+export async function loader() {
+	const pets = await prisma.pet.findMany({
+		select: {
+			id: true,
+			name: true,
+		},
+	})
 
 	return json({ pets })
 }
