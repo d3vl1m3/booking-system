@@ -1,6 +1,6 @@
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 
-import { db } from 'app/utils/db.server'
+import { prisma } from 'app/utils/db.server'
 import { json } from '@remix-run/node'
 import { addUserModalUsersListPage, userDetailsPage } from '~/routes'
 
@@ -11,9 +11,14 @@ type User = {
 }
 
 export async function loader() {
-	const users: User[] = db.user
-		.getAll()
-		.map(({ id, name, username }) => ({ id, name, username }))
+	const users: User[] = await prisma.user.findMany({
+		select: {
+			id: true,
+			name: true,
+			username: true,
+		},
+	})
+
 	return json({ users })
 }
 

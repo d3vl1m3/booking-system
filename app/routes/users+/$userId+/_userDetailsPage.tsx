@@ -1,6 +1,6 @@
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 
-import { db } from '~/utils/db.server'
+import { prisma } from '~/utils/db.server'
 import { LoaderFunctionArgs, json } from '@remix-run/node'
 import { invariantResponse } from '~/utils/misc'
 import {
@@ -12,34 +12,26 @@ import {
 import { GeneralErrorBoundary } from '~/components/generalErrorBoundary/generalErrorBoundary'
 
 export async function loader({ params }: LoaderFunctionArgs) {
-	const user = db.user.findFirst({
+	const user = await prisma.user.findUnique({
 		where: {
-			id: {
-				equals: params.userId,
+			id: params.userId,
+		},
+		select: {
+			id: true,
+			name: true,
+			username: true,
+			pets: {
+				select: {
+					id: true,
+					name: true,
+				},
 			},
 		},
 	})
 
 	invariantResponse(user, 'User not found', { status: 404 })
 
-	const pets = db.pet.findMany({
-		where: {
-			owners: {
-				id: {
-					contains: user.id,
-				},
-			},
-		},
-	})
-
-	return json({
-		user: {
-			name: user.name,
-			username: user.username,
-			id: user.id,
-			pets,
-		},
-	})
+	return json({ user })
 }
 
 export default function UserDetailsPage() {
