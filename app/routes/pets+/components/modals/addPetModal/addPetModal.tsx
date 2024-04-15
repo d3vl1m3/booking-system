@@ -18,7 +18,8 @@ import {
 
 type Owner = {
 	id: string
-	name: string
+	name: string | null
+	username: string
 }
 
 type AddPetModalProps = {
@@ -115,7 +116,7 @@ export const AddPetModal = ({
 					<select {...ownerFieldProps}>
 						{owners.map(owner => (
 							<option key={owner.id} value={owner.id}>
-								{owner.name}
+								{owner.name ?? owner.username}
 							</option>
 						))}
 					</select>

@@ -11,7 +11,7 @@ import { z } from 'zod'
 import { petDetailsPage, petsListPage } from '~/routes'
 import { AddPetModal } from '~/routes/pets+/components/modals/addPetModal/addPetModal'
 import { validateCSRF } from '~/utils/csrf.server'
-import { db, uploadImages } from '~/utils/db.server'
+import { db, prisma, uploadImages } from '~/utils/db.server'
 import { validateHoneypot } from '~/utils/honeypot.server'
 import { invariantResponse } from '~/utils/misc'
 
@@ -33,10 +33,14 @@ export const AddPetFormSchema = z.object({
 	images: ImageFieldsetSchema,
 })
 
-export function loader() {
-	const owners = db.user
-		.getAll()
-		.map(({ id, name, username }) => ({ id, name, username }))
+export async function loader() {
+	const owners = await prisma.user.findMany({
+		select: {
+			id: true,
+			name: true,
+			username: true,
+		},
+	})
 
 	return json({ owners })
 }
