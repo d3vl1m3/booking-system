@@ -6,36 +6,31 @@ import {
 import { useLoaderData, json } from '@remix-run/react'
 import { userDetailsPage, usersListPage } from '~/routes'
 import { DeleteUserModal } from '~/routes/users+/components/deleteUserModal/deleteUserModal'
-import { db } from '~/utils/db.server'
+import { prisma } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-export function loader({ params }: LoaderFunctionArgs) {
-	const user = db.user.findFirst({
+export async function loader({ params }: LoaderFunctionArgs) {
+	const user = await prisma.user.findUnique({
 		where: {
-			id: {
-				equals: params.userId,
-			},
+			id: params.userId,
+		},
+		select: {
+			username: true,
+			id: true,
 		},
 	})
 
 	invariantResponse(user, 'User not found')
 
-	return json({
-		user: {
-			name: user.name,
-			id: user.id,
-		},
-	})
+	return json({ user })
 }
 
 export function action({ params }: ActionFunctionArgs) {
 	const { userId } = params
 
-	db.user.delete({
+	prisma.user.delete({
 		where: {
-			id: {
-				equals: userId,
-			},
+			id: userId,
 		},
 	})
 
@@ -45,6 +40,9 @@ export function action({ params }: ActionFunctionArgs) {
 export default function DeleteUserRoute() {
 	const { user } = useLoaderData<typeof loader>()
 	return (
-		<DeleteUserModal name={user.name} onCloseRoute={userDetailsPage(user.id)} />
+		<DeleteUserModal
+			name={user.username}
+			onCloseRoute={userDetailsPage(user.id)}
+		/>
 	)
 }
