@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, json } from '@remix-run/node'
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import { invariantResponse } from '~/utils/misc'
-import { db } from '~/utils/db.server'
+import { prisma } from '~/utils/db.server'
 import {
 	deletePetModalPetDetailsPage,
 	petsListPage,
@@ -10,24 +10,32 @@ import {
 } from '~/routes'
 
 export async function loader({ params }: LoaderFunctionArgs) {
-	const pet = db.pet.findFirst({
+	const pet = await prisma.pet.findUnique({
 		where: {
-			id: {
-				equals: params.petId,
+			id: params.petId,
+		},
+		select: {
+			name: true,
+			id: true,
+			owners: {
+				select: {
+					id: true,
+					name: true,
+					username: true,
+				},
+			},
+			images: {
+				select: {
+					id: true,
+					altText: true,
+				},
 			},
 		},
 	})
 
 	invariantResponse(pet, 'Pet not found', { status: 404 })
 
-	return json({
-		pet: {
-			name: pet.name,
-			id: pet.id,
-			owners: pet.owners,
-			images: pet.images,
-		},
-	})
+	return json({ pet })
 }
 
 export default function PetInfoPage() {
@@ -75,7 +83,7 @@ export default function PetInfoPage() {
 			<ul>
 				{pet.owners.map(owner => (
 					<Link key={owner.id} to={userDetailsPage(owner.id)}>
-						{owner.name}
+						{owner.name || owner.username}
 					</Link>
 				))}
 			</ul>
