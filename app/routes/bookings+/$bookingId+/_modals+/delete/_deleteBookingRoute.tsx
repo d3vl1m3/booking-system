@@ -6,38 +6,30 @@ import {
 import { useLoaderData, json } from '@remix-run/react'
 import { bookingDetailsPage, bookingsListPage } from '~/routes'
 import { DeleteBookingModal } from '~/routes/bookings+/components/modals/deleteBookingModal/deleteBookingModal'
-import { db } from '~/utils/db.server'
+import { prisma } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-export function loader({ params }: LoaderFunctionArgs) {
-	const user = db.booking.findFirst({
+export async function loader({ params }: LoaderFunctionArgs) {
+	const booking = await prisma.booking.findUnique({
 		where: {
-			id: {
-				equals: params.bookingId,
-			},
+			id: params.bookingId,
+		},
+		select: {
+			id: true,
 		},
 	})
 
-	invariantResponse(user, 'User not found')
+	invariantResponse(booking, 'booking not found')
 
-	return json({
-		booking: {
-			id: user.id,
-		},
-	})
+	return json({ booking })
 }
 
-export function action({ params }: ActionFunctionArgs) {
+export async function action({ params }: ActionFunctionArgs) {
 	const { bookingId } = params
 
-	db.booking.update({
+	await prisma.booking.delete({
 		where: {
-			id: {
-				equals: bookingId,
-			},
-		},
-		data: {
-			cancelled: true,
+			id: bookingId,
 		},
 	})
 
