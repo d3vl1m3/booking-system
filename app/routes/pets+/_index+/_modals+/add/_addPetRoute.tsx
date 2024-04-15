@@ -38,7 +38,6 @@ export async function loader() {
 		select: {
 			id: true,
 			name: true,
-			username: true,
 		},
 	})
 
