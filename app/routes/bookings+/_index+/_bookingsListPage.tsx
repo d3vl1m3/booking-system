@@ -9,19 +9,25 @@ import {
 	addBookingModalBookingsListPage,
 	bookingDetailsPage,
 	bookingsListPage,
+	petDetailsPage,
 } from '~/routes'
-import { db } from '~/utils/db.server'
+import { db, prisma } from '~/utils/db.server'
 
-export function loader() {
-	const bookings = db.booking
-		.getAll()
-		.map(({ id, bookingRefrence, dateEnd, dateStart, pets }) => ({
-			id,
-			bookingRefrence,
-			dateEnd,
-			dateStart,
-			pets,
-		}))
+export async function loader() {
+	const bookings = await prisma.booking.findMany({
+		select: {
+			id: true,
+			bookingRefrence: true,
+			dateEnd: true,
+			dateStart: true,
+			pet: {
+				select: {
+					id: true,
+					name: true,
+				},
+			},
+		},
+	})
 
 	return json({
 		bookings,
@@ -67,7 +73,11 @@ export default function BookingsListPage() {
 										{booking.bookingRefrence}
 									</Link>
 								</td>
-								<td>{booking.pets.map(({ name }) => name).join(', ')}</td>
+								<td>
+									<Link to={`${petDetailsPage(booking.id)}`}>
+										{booking.pet.name}
+									</Link>
+								</td>
 								<td>{booking.dateStart}</td>
 								<td>{booking.dateEnd}</td>
 							</tr>
