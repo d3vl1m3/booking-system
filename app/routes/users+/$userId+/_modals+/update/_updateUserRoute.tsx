@@ -7,31 +7,22 @@ import {
 import { useLoaderData } from '@remix-run/react'
 import { userDetailsPage } from '~/routes'
 import { UpdateUserModal } from '~/routes/users+/components/updateUserModal/updateUserModal'
-import { db } from '~/utils/db.server'
+import { db, prisma } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-export function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const { userId } = params
 
-	const user = db.user.findFirst({
+	const user = await prisma.user.findFirst({
 		where: {
-			id: {
-				equals: userId,
-			},
+			id: userId,
 		},
 	})
 
-	const owners = db.user.getAll().map(({ name, id }) => ({ name, id }))
-
 	invariantResponse(user, 'User not found')
-	invariantResponse(owners, 'Owners not found')
 
 	return json({
-		user: {
-			name: user.name,
-			id: user.id,
-		},
-		owners,
+		user,
 	})
 }
 
