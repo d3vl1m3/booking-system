@@ -6,36 +6,31 @@ import {
 import { useLoaderData, json } from '@remix-run/react'
 import { petDetailsPage, petsListPage } from '~/routes'
 import { DeletePetModal } from '~/routes/pets+/components/modals/deletePetModal/deletePetModal'
-import { db } from '~/utils/db.server'
+import { prisma } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-export function loader({ params }: LoaderFunctionArgs) {
-	const pet = db.pet.findFirst({
+export async function loader({ params }: LoaderFunctionArgs) {
+	const pet = await prisma.pet.findFirst({
 		where: {
-			id: {
-				equals: params.petId,
-			},
+			id: params.petId,
+		},
+		select: {
+			id: true,
+			name: true,
 		},
 	})
 
 	invariantResponse(pet, 'Pet not found')
 
-	return json({
-		pet: {
-			id: pet.id,
-			name: pet.name,
-		},
-	})
+	return json({ pet })
 }
 
 export function action({ params }: ActionFunctionArgs) {
 	const { petId } = params
 
-	db.pet.delete({
+	prisma.pet.delete({
 		where: {
-			id: {
-				equals: petId,
-			},
+			id: petId,
 		},
 	})
 
