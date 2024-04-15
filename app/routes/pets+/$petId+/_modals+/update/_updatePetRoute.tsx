@@ -7,31 +7,41 @@ import {
 import { useLoaderData } from '@remix-run/react'
 import { petDetailsPage } from '~/routes'
 import { UpdatePetModal } from '~/routes/pets+/components/modals/updatePetModal/updatePetModal'
-import { db } from '~/utils/db.server'
+import { prisma, db } from '~/utils/db.server'
 import { invariantResponse } from '~/utils/misc'
 
-export function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const { petId } = params
 
-	const pet = db.pet.findFirst({
+	const pet = await prisma.pet.findFirst({
 		where: {
-			id: {
-				equals: petId,
+			id: petId,
+		},
+		select: {
+			id: true,
+			name: true,
+			owners: {
+				select: {
+					id: true,
+					name: true,
+				},
 			},
 		},
 	})
 
-	const owners = db.user.getAll().map(({ name, id }) => ({ name, id }))
+	invariantResponse(pet, `Pet not found: ${petId}`)
 
-	invariantResponse(pet, 'Pet not found')
+	const owners = await prisma.user.findMany({
+		select: {
+			id: true,
+			name: true,
+		},
+	})
+
 	invariantResponse(owners, 'Owners not found')
 
 	return json({
-		pet: {
-			id: pet.id,
-			name: pet.name,
-			owners: pet.owners,
-		},
+		pet,
 		owners,
 	})
 }
