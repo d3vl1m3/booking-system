@@ -1,35 +1,59 @@
+import { parseWithZod } from '@conform-to/zod'
 import {
 	ActionFunctionArgs,
 	LoaderFunctionArgs,
 	json,
 	redirect,
+	unstable_createMemoryUploadHandler,
+	unstable_parseMultipartFormData,
 } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { useActionData, useLoaderData, useParams } from '@remix-run/react'
+import { z } from 'zod'
 import { petDetailsPage } from '~/routes'
 import { UpdatePetModal } from '~/routes/pets+/components/modals/updatePetModal/updatePetModal'
-import { prisma, db } from '~/utils/db.server'
+import { validateCSRF } from '~/utils/csrf.server'
+import { db, prisma, uploadImages } from '~/utils/db.server'
+import { validateHoneypot } from '~/utils/honeypot.server'
 import { invariantResponse } from '~/utils/misc'
 
-export async function loader({ params }: LoaderFunctionArgs) {
-	const { petId } = params
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
 
-	const pet = await prisma.pet.findFirst({
+export const ImageSchema = z.object({
+	id: z.string().optional(),
+	file: z
+		.instanceof(File)
+		.refine(file => file.size <= MAX_UPLOAD_SIZE, 'File is too large'),
+	altText: z.string().max(50).optional(),
+})
+
+export const ImageFieldsetSchema = z.array(ImageSchema)
+
+export const UpdatePetFormSchema = z.object({
+	name: z.string().min(1),
+	owner: z.string().min(1),
+	images: ImageFieldsetSchema,
+})
+
+export async function loader({ params }: LoaderFunctionArgs) {
+	const pet = await prisma.pet.findUnique({
 		where: {
-			id: petId,
+			id: params.petId,
 		},
 		select: {
 			id: true,
 			name: true,
-			owners: {
+			owners: true,
+			images: {
 				select: {
 					id: true,
-					name: true,
+					blob: true,
+					altText: true,
 				},
 			},
 		},
 	})
 
-	invariantResponse(pet, `Pet not found: ${petId}`)
+	invariantResponse(pet, 'No pet found')
 
 	const owners = await prisma.user.findMany({
 		select: {
@@ -38,25 +62,27 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		},
 	})
 
-	invariantResponse(owners, 'Owners not found')
-
-	return json({
-		pet,
-		owners,
-	})
+	return json({ pet, owners })
 }
 
-export async function action({ params, request }: ActionFunctionArgs) {
-	const { petId } = params
+export async function action({ request }: ActionFunctionArgs) {
+	const formData = await unstable_parseMultipartFormData(
+		request,
+		unstable_createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
+	)
 
-	const formData = await request.formData()
-	const name = formData.get('name')
-	const ownerId = formData.get('owner')
+	await validateCSRF(formData, request.headers)
+	await validateHoneypot(formData)
 
-	invariantResponse(typeof name === 'string', 'Invalid name value')
-	invariantResponse(typeof ownerId === 'string', 'Invalid owner value')
-	invariantResponse(name, 'Name cannot be blank')
-	invariantResponse(ownerId, 'Owner field cannot be empty')
+	const submission = parseWithZod(formData, {
+		schema: UpdatePetFormSchema,
+	})
+
+	if (submission?.status !== 'success') {
+		return json({ status: 'error', submission }, { status: 400 })
+	}
+
+	const { name, owner: ownerId, images } = submission.value
 
 	const owner = db.user.findFirst({
 		where: {
@@ -68,30 +94,29 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 	invariantResponse(owner, 'Owner not found')
 
-	db.pet.update({
-		where: {
-			id: {
-				equals: petId,
-			},
-		},
-		data: {
-			name,
-			owners: [owner],
-		},
+	const uploadedImages = await uploadImages(images)
+	const pet = db.pet.create({
+		name,
+		owners: [owner],
+		images: uploadedImages.filter(Boolean),
 	})
 
-	return redirect(`/pets/${petId}`)
+	invariantResponse(pet, 'Failed to create pet', { status: 409 })
+
+	return redirect(petDetailsPage(pet.id))
 }
 
 export default function UpdatePetRoute() {
-	const { pet, owners } = useLoaderData<typeof loader>()
+	const { petId } = useParams()
+	const { owners, pet } = useLoaderData<typeof loader>()
+	const actionData = useActionData<typeof action>()
 
 	return (
 		<UpdatePetModal
-			name={pet.name}
-			owner={pet.owners?.[0]}
-			ownerOptions={owners}
-			onCloseRoute={petDetailsPage(pet.id)}
+			actionData={actionData}
+			onCloseRoute={petDetailsPage(petId ?? '')}
+			owners={owners}
+			pet={pet}
 		/>
 	)
 }
