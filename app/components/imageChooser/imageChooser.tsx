@@ -1,25 +1,28 @@
 import {
 	FieldMetadata,
+	getFieldsetProps,
 	getInputProps,
 	getTextareaProps,
 } from '@conform-to/react'
 import { useState } from 'react'
 import { z } from 'zod'
 import { petImageResource } from '~/routes'
-import { ImageSchema } from '~/routes/pets+/$petId+/_modals+/update/_updatePetRoute'
+import { ImageFieldsetSchema } from '~/routes/pets+/$petId+/_modals+/update/_updatePetRoute'
 import { cn } from '~/utils/misc'
 
 export function ImageChooser({
 	config,
 }: {
-	config: FieldMetadata<z.infer<typeof ImageSchema>>
+	config: FieldMetadata<z.infer<typeof ImageFieldsetSchema>>
 }) {
 	const fileInputProps = getInputProps(config.getFieldset().file, {
 		type: 'file',
 	})
-	const idInputProps = getInputProps(config.getFieldset().file, {
+	const idInputProps = getInputProps(config.getFieldset().id, {
 		type: 'hidden',
 	})
+
+	const fieldsetProps = getFieldsetProps(config)
 
 	const altTextProps = getTextareaProps(config.getFieldset().altText)
 
@@ -30,8 +33,7 @@ export function ImageChooser({
 	const [altText, setAltText] = useState(config.value?.altText ?? '')
 
 	return (
-		// 🐨 pass the ref prop to fieldset
-		<fieldset>
+		<fieldset {...fieldsetProps}>
 			<div className="flex gap-3">
 				<div className="w-32">
 					<div className="relative h-32 w-32">

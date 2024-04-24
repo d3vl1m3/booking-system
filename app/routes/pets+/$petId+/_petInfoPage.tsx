@@ -47,7 +47,7 @@ export default function PetInfoPage() {
 			<h1>{pet.name}&#39;s info</h1>
 			{pet.images.length
 				? pet.images.map(image => (
-						<a href={petImageResource(image.id) ?? ''}>
+						<a href={petImageResource(image.id) ?? ''} key={image.id}>
 							<img
 								src={petImageResource(image.id) ?? ''}
 								alt={image.altText ?? ''}
