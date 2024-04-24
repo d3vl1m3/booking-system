@@ -4,6 +4,7 @@ import { invariantResponse } from '~/utils/misc'
 import { prisma } from '~/utils/db.server'
 import {
 	deletePetModalPetDetailsPage,
+	petImageResource,
 	petsListPage,
 	updatePetModalPetDetailsPage,
 	userDetailsPage,
@@ -46,9 +47,9 @@ export default function PetInfoPage() {
 			<h1>{pet.name}&#39;s info</h1>
 			{pet.images.length
 				? pet.images.map(image => (
-						<a href={`/resources/images/${image.id}`}>
+						<a href={petImageResource(image.id) ?? ''}>
 							<img
-								src={`/resources/images/${image.id}`}
+								src={petImageResource(image.id) ?? ''}
 								alt={image.altText ?? ''}
 								className="h-32 w-32 rounded-lg object-cover"
 							/>

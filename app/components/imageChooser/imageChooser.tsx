@@ -5,7 +5,8 @@ import {
 } from '@conform-to/react'
 import { useState } from 'react'
 import { z } from 'zod'
-import { ImageSchema } from '~/routes/pets+/_index+/_modals+/add/_addPetRoute'
+import { petImageResource } from '~/routes'
+import { ImageSchema } from '~/routes/pets+/$petId+/_modals+/update/_updatePetRoute'
 import { cn } from '~/utils/misc'
 
 export function ImageChooser({
@@ -24,10 +25,8 @@ export function ImageChooser({
 
 	const existingImage = Boolean(config.value?.id)
 	const [previewImage, setPreviewImage] = useState<string | null>(
-		// 🐨 this should now reference fields.id.defaultValue
-		existingImage ? `/resources/images/${config.id}` : null,
+		existingImage ? petImageResource(config.value?.id) : null,
 	)
-	// 🐨 this should now reference fields.altText.defaultValue
 	const [altText, setAltText] = useState(config.value?.altText ?? '')
 
 	return (

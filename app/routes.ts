@@ -32,3 +32,7 @@ export const updateUserModalUserDetailsPage = (userId: string) =>
 	`${userDetailsPage(userId)}/update`
 export const deleteUserModalUserDetailsPage = (userId: string) =>
 	`${userDetailsPage(userId)}/delete`
+
+// "resources"
+export const petImageResource = (petImageId?: string) =>
+	petImageId ? `/resources/petImages/${petImageId}` : null
