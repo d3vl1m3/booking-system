@@ -1,3 +1,4 @@
+import React from 'react'
 import {
 	getFormProps,
 	useForm,
@@ -5,7 +6,6 @@ import {
 	getSelectProps,
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { pt_BR } from '@faker-js/faker'
 import { SerializeFrom } from '@remix-run/node'
 import { Form, Path } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
@@ -16,6 +16,12 @@ import {
 	UpdatePetFormSchema,
 	action,
 } from '~/routes/pets+/$petId+/_modals+/update/_updatePetRoute'
+
+export type PetImage = {
+	id: string
+	blob: { type: 'Buffer'; data: number[] }
+	altText: string
+}
 
 type Owner = {
 	id: string
@@ -30,11 +36,7 @@ type UpdatePetModalProps = {
 		id: string
 		name: string
 		owners: Owner[]
-		images: {
-			id: string
-			altText: string
-			blob: { type: 'Buffer'; data: number[] }
-		}[]
+		images: PetImage[]
 	}
 }
 
@@ -98,7 +100,7 @@ export const UpdatePetModal = ({
 				<div>
 					{imagesFieldList.map((imageField, index) => {
 						return (
-							<>
+							<React.Fragment key={index}>
 								<button
 									className="btn btn-danger"
 									{...form.remove.getButtonProps({
@@ -110,7 +112,7 @@ export const UpdatePetModal = ({
 									<span aria-hidden>❌</span>
 								</button>
 								<ImageChooser config={imageField} />
-							</>
+							</React.Fragment>
 						)
 					})}
 					<button
