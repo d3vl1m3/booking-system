@@ -7,7 +7,7 @@ import { faker } from '@faker-js/faker'
 const prisma = new PrismaClient()
 
 // Clear all the current data
-// The following records are als deleted as well due to the joins:
+// The following records are all deleted as well due to the joins:
 // Booking, PetImage
 await prisma.user.deleteMany()
 await prisma.pet.deleteMany()
@@ -245,3 +245,14 @@ await prisma.user.create({
 		},
 	},
 })
+
+// Create more users...
+for (let i = 0; i < 10; i++) {
+	await prisma.user.create({
+		data: {
+			email: faker.internet.email(),
+			username: faker.internet.userName(),
+			name: faker.person.fullName(),
+		},
+	})
+}
