@@ -16,7 +16,6 @@ import { honeypot } from './utils/honeypot.server'
 import { getEnv } from './utils/env.server'
 import { csrf } from './utils/csrf.server'
 import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
-import { UserSearchField } from './components/userSearchField/userSearchField'
 
 ReactModal.setAppElement('#app')
 
@@ -58,7 +57,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 						Pet booker
 					</Link>
 
-					<UserSearchField />
 					<nav>
 						<ul>
 							<li>
