@@ -16,6 +16,7 @@ import {
 	UpdatePetFormSchema,
 	action,
 } from '~/routes/pets+/$petId+/_modals+/update/_updatePetRoute'
+import { ErrorList } from '~/components/errorList/errorList'
 
 export type PetImage = {
 	id: string
@@ -39,23 +40,6 @@ type UpdatePetModalProps = {
 		images: PetImage[]
 	}
 }
-
-const ErrorList = ({
-	id,
-	errors,
-}: {
-	id?: string
-	errors?: Array<string> | null
-}) =>
-	errors?.length ? (
-		<ul id={id} className="flex flex-col gap-1">
-			{errors.map((error, i) => (
-				<li key={i} className="text-[10px] text-foreground-destructive">
-					{error}
-				</li>
-			))}
-		</ul>
-	) : null
 
 export const UpdatePetModal = ({
 	pet,

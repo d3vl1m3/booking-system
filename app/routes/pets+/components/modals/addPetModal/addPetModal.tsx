@@ -9,6 +9,7 @@ import { SerializeFrom } from '@remix-run/node'
 import { Form, Path } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
+import { ErrorList } from '~/components/errorList/errorList'
 import { ImageChooser } from '~/components/imageChooser/imageChooser'
 import { RouteBasedModal } from '~/components/routeBasedModal/routeBasedModal'
 import {
@@ -26,23 +27,6 @@ type AddPetModalProps = {
 	owners: Owner[]
 	onCloseRoute: string | Partial<Path>
 }
-
-const ErrorList = ({
-	id,
-	errors,
-}: {
-	id?: string
-	errors?: Array<string> | null
-}) =>
-	errors?.length ? (
-		<ul id={id} className="flex flex-col gap-1">
-			{errors.map((error, i) => (
-				<li key={i} className="text-[10px] text-foreground-destructive">
-					{error}
-				</li>
-			))}
-		</ul>
-	) : null
 
 export const AddPetModal = ({
 	actionData,
