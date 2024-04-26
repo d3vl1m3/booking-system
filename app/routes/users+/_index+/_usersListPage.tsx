@@ -16,7 +16,7 @@ const UserSeachResultSchema = z.object({
 	id: z.string(),
 	name: z.string().nullable(),
 	username: z.string(),
-	// imageId: z.string().nullable(),
+	imageId: z.string().nullable(),
 })
 
 const UserSeachResultListSchema = z.array(UserSeachResultSchema)
@@ -31,7 +31,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const rawUsers: User[] = await prisma.$queryRaw`
 		SELECT name, id, username 
 		FROM "User"
-		-- LEFT JOIN UserImage ON User.Id = Image.userId 
 		WHERE username LIKE ${like} OR name LIKE ${like} 
 		LIMIT 50`
 
