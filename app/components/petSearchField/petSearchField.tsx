@@ -11,7 +11,7 @@ const SearchFormSchema = z.object({
 		.min(1, 'Must be at least 1 character long'),
 })
 
-export const UserSearchField = () => {
+export const PetSearchField = () => {
 	const [form, fields] = useForm({
 		id: 'search-form',
 		constraint: getZodConstraint(SearchFormSchema),
@@ -29,14 +29,14 @@ export const UserSearchField = () => {
 	})
 
 	return (
-		<form {...formProps} method="get" action="users">
+		<form {...formProps} method="get" action="pets">
 			<label htmlFor={searchFieldProps.id} className="sr-only">
-				Search users
+				Search pets
 			</label>
 			<div className="inline-block">
 				<input
 					{...searchFieldProps}
-					placeholder="Search users"
+					placeholder="Search pets"
 					className="border border-gray-500 mr-1 p-2"
 				/>
 				<ErrorList errors={fields.search.errors} id={searchFieldProps.id} />
