@@ -143,34 +143,20 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			owners: {
 				set: [{ id: ownerId }],
 			},
+			images: {
+				deleteMany: {
+					id: { notIn: imageUpdates.map(i => i.id) },
+				},
+				updateMany: imageUpdates.map(updates => ({
+					where: { id: updates.id },
+					data: { ...updates, id: updates.blob ? cuid() : updates.id },
+				})),
+				createMany: {
+					data: newImages,
+				},
+			},
 		},
 	})
-
-	// Delete removed PetImages
-	await prisma.petImage.deleteMany({
-		where: {
-			id: { notIn: imageUpdates.map(i => i.id) },
-			petId,
-		},
-	})
-
-	// Update existing PetImages
-	for (const updates of imageUpdates) {
-		// 🐨 change this prisma to the transactional client
-		await prisma.petImage.update({
-			select: { id: true },
-			where: { id: updates.id },
-			data: { ...updates, id: updates.blob ? cuid() : updates.id },
-		})
-	}
-
-	// Create new PetImages
-	for (const newImage of newImages) {
-		await prisma.petImage.create({
-			select: { id: true },
-			data: { ...newImage, petId },
-		})
-	}
 
 	return redirect(petDetailsPage(petId))
 }
